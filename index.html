@@ -1,0 +1,3133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kitabi - Library Management System Documentation</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary-color: #3b82f6;
+        --primary-dark: #2563eb;
+        --primary-light: #60a5fa;
+        --secondary-color: #8b5cf6;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --dark-bg: #0f172a;
+        --dark-text: #1e293b;
+        --light-text: #64748b;
+        --border-color: #e2e8f0;
+        --card-bg: #f8fafc;
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+        --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.15);
+        --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.2);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont,
+          sans-serif;
+        line-height: 1.7;
+        color: var(--dark-text);
+        background: #ffffff;
+        overflow-x: hidden;
+      }
+
+      /* Scrollbar Styling */
+      ::-webkit-scrollbar {
+        width: 12px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #f1f5f9;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: linear-gradient(
+          180deg,
+          var(--primary-color),
+          var(--primary-dark)
+        );
+        border-radius: 6px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--primary-dark);
+      }
+
+      /* Navigation Bar */
+      .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        box-shadow: var(--shadow-md);
+        z-index: 1000;
+        transition: transform 0.3s ease;
+      }
+
+      .navbar.hidden {
+        transform: translateY(-100%);
+      }
+
+      .navbar-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .navbar-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1.5rem;
+        font-weight: 700;
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .navbar-menu {
+        display: flex;
+        gap: 2rem;
+        list-style: none;
+      }
+
+      .navbar-menu a {
+        color: var(--dark-text);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+        position: relative;
+      }
+
+      .screenshot-image {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e0e0e0;
+      }
+
+      .navbar-menu a::after {
+        content: "";
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: linear-gradient(
+          90deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        transition: width 0.3s;
+      }
+
+      .navbar-menu a:hover {
+        color: var(--primary-color);
+      }
+
+      .navbar-menu a:hover::after {
+        width: 100%;
+      }
+
+      .menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: var(--dark-text);
+        cursor: pointer;
+      }
+
+      /* Mobile Menu */
+      .mobile-menu {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 80%;
+        max-width: 400px;
+        height: 100vh;
+        background: white;
+        box-shadow: var(--shadow-xl);
+        transition: right 0.3s ease;
+        z-index: 1001;
+        overflow-y: auto;
+      }
+
+      .mobile-menu.active {
+        right: 0;
+      }
+
+      .mobile-menu-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .mobile-menu-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--dark-text);
+      }
+
+      .mobile-menu-list {
+        list-style: none;
+        padding: 1rem;
+      }
+
+      .mobile-menu-list a {
+        display: block;
+        padding: 1rem;
+        color: var(--dark-text);
+        text-decoration: none;
+        border-radius: 8px;
+        transition: background 0.3s;
+      }
+
+      .mobile-menu-list a:hover {
+        background: var(--card-bg);
+      }
+
+      .mobile-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s, visibility 0.3s;
+        z-index: 1000;
+      }
+
+      .mobile-overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      /* Main Container */
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 80px 2rem 2rem;
+      }
+
+      /* Progress Bar */
+      .progress-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 4px;
+        background: linear-gradient(
+          90deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        z-index: 1002;
+        transition: width 0.1s;
+      }
+
+      /* Enhanced Cover Page Styles */
+      .cover-page {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 4rem 2rem;
+        background: linear-gradient(
+          135deg,
+          #0f172a 0%,
+          #1e293b 20%,
+          #1e3a8a 40%,
+          #3b82f6 60%,
+          #06b6d4 80%,
+          #14b8a6 100%
+        );
+        position: relative;
+        overflow: hidden;
+        margin: -10px -2rem 0;
+      }
+
+      /* Animated gradient overlay */
+      .cover-page::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(
+            circle at 20% 30%,
+            rgba(99, 102, 241, 0.2) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 80% 70%,
+            rgba(59, 130, 246, 0.2) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 40% 80%,
+            rgba(6, 182, 212, 0.2) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 60% 20%,
+            rgba(139, 92, 246, 0.15) 0%,
+            transparent 50%
+          );
+        animation: gradientPulse 20s ease infinite;
+        z-index: 0;
+      }
+
+      /* Grid pattern overlay */
+      .cover-page::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: repeating-linear-gradient(
+            0deg,
+            rgba(255, 255, 255, 0.04) 0px,
+            transparent 1px,
+            transparent 2px,
+            rgba(255, 255, 255, 0.04) 3px
+          ),
+          repeating-linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.04) 0px,
+            transparent 1px,
+            transparent 2px,
+            rgba(255, 255, 255, 0.04) 3px
+          );
+        background-size: 80px 80px;
+        animation: gridMove 30s linear infinite;
+        opacity: 0.5;
+        z-index: 0;
+      }
+
+      @keyframes gradientPulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1) rotate(0deg);
+        }
+        50% {
+          opacity: 0.8;
+          transform: scale(1.05) rotate(2deg);
+        }
+      }
+
+      @keyframes gridMove {
+        0% {
+          transform: translate(0, 0);
+        }
+        100% {
+          transform: translate(80px, 80px);
+        }
+      }
+
+      .cover-background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        overflow: hidden;
+        z-index: 0;
+      }
+
+      /* Floating orbs */
+      .geometric-shape {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(80px);
+        opacity: 0.4;
+        animation: floatOrbs 25s ease-in-out infinite;
+      }
+
+      .shape-1 {
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(
+          circle,
+          rgba(139, 92, 246, 0.5) 0%,
+          transparent 70%
+        );
+        top: -150px;
+        left: -150px;
+        animation-delay: 0s;
+      }
+
+      .shape-2 {
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(
+          circle,
+          rgba(59, 130, 246, 0.5) 0%,
+          transparent 70%
+        );
+        bottom: -100px;
+        right: -100px;
+        animation-delay: 5s;
+      }
+
+      .shape-3 {
+        width: 350px;
+        height: 350px;
+        background: radial-gradient(
+          circle,
+          rgba(6, 182, 212, 0.5) 0%,
+          transparent 70%
+        );
+        bottom: 30%;
+        left: 10%;
+        animation-delay: 10s;
+      }
+
+      .shape-4 {
+        width: 450px;
+        height: 450px;
+        background: radial-gradient(
+          circle,
+          rgba(99, 102, 241, 0.4) 0%,
+          transparent 70%
+        );
+        top: 20%;
+        right: 0%;
+        animation-delay: 15s;
+      }
+
+      @keyframes floatOrbs {
+        0%,
+        100% {
+          transform: translate(0, 0) scale(1);
+          opacity: 0.4;
+        }
+        33% {
+          transform: translate(40px, -40px) scale(1.15);
+          opacity: 0.5;
+        }
+        66% {
+          transform: translate(-40px, 40px) scale(0.85);
+          opacity: 0.3;
+        }
+      }
+
+      .cover-content {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        max-width: 1200px;
+        display: flex;
+        flex-direction: column;
+        gap: 3rem;
+      }
+
+      .university-section {
+        animation: fadeInUp 0.8s ease-out;
+      }
+
+      .university-logo {
+        width: 140px;
+        height: 140px;
+        margin: 0 auto 1.5rem;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.18) 0%,
+          rgba(255, 255, 255, 0.08) 100%
+        );
+        backdrop-filter: blur(30px);
+        border: 3px solid rgba(255, 255, 255, 0.25);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4rem;
+        color: white;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4),
+          inset 0 0 40px rgba(255, 255, 255, 0.1),
+          0 0 50px rgba(59, 130, 246, 0.3);
+        animation: logoFloat 4s ease-in-out infinite;
+        position: relative;
+      }
+
+      .university-logo::before {
+        content: "";
+        position: absolute;
+        inset: -4px;
+        border-radius: 50%;
+        background: linear-gradient(
+          135deg,
+          rgba(99, 102, 241, 0.6),
+          rgba(59, 130, 246, 0.6),
+          rgba(6, 182, 212, 0.6),
+          rgba(139, 92, 246, 0.6)
+        );
+        z-index: -1;
+        animation: rotateBorder 10s linear infinite;
+        filter: blur(8px);
+      }
+
+      @keyframes rotateBorder {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes logoFloat {
+        0%,
+        100% {
+          transform: translateY(0) rotate(0deg);
+        }
+        25% {
+          transform: translateY(-20px) rotate(3deg);
+        }
+        50% {
+          transform: translateY(-30px) rotate(0deg);
+        }
+        75% {
+          transform: translateY(-20px) rotate(-3deg);
+        }
+      }
+
+      .university-name {
+        font-size: clamp(2.2rem, 5vw, 3.2rem);
+        font-weight: 900;
+        color: white;
+        margin-bottom: 1rem;
+        text-shadow: 0 3px 15px rgba(0, 0, 0, 0.4),
+          0 0 40px rgba(59, 130, 246, 0.6), 0 0 80px rgba(99, 102, 241, 0.4);
+        letter-spacing: 0.02em;
+      }
+
+      .divider-line {
+        width: 120px;
+        height: 4px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.9),
+          transparent
+        );
+        margin: 1.5rem auto;
+        animation: pulseLine 3s ease-in-out infinite;
+        border-radius: 2px;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+      }
+
+      @keyframes pulseLine {
+        0%,
+        100% {
+          opacity: 0.6;
+          transform: scaleX(1);
+        }
+        50% {
+          opacity: 1;
+          transform: scaleX(1.1);
+        }
+      }
+
+      .department-name {
+        font-size: clamp(1.4rem, 3vw, 1.9rem);
+        color: rgba(255, 255, 255, 0.95);
+        margin-bottom: 1rem;
+        font-weight: 600;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      }
+
+      .course-info {
+        font-size: clamp(1.05rem, 2vw, 1.3rem);
+        color: rgba(255, 255, 255, 0.88);
+        line-height: 1.9;
+        text-shadow: 0 1px 8px rgba(0, 0, 0, 0.3);
+      }
+
+      .project-section {
+        padding: 3.5rem 2.5rem;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.12) 0%,
+          rgba(255, 255, 255, 0.06) 100%
+        );
+        backdrop-filter: blur(30px);
+        border: 2px solid rgba(255, 255, 255, 0.25);
+        border-radius: 28px;
+        box-shadow: 0 15px 60px rgba(0, 0, 0, 0.3),
+          inset 0 0 50px rgba(255, 255, 255, 0.08);
+        animation: fadeInUp 0.8s ease-out 0.3s;
+        animation-fill-mode: both;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .project-section::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(99, 102, 241, 0.8),
+          rgba(59, 130, 246, 0.8),
+          rgba(6, 182, 212, 0.8),
+          transparent
+        );
+        animation: shimmer 3s ease-in-out infinite;
+      }
+
+      @keyframes shimmer {
+        0%,
+        100% {
+          opacity: 0.5;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+
+      .project-badge {
+        display: inline-block;
+        padding: 0.6rem 1.8rem;
+        background: linear-gradient(
+          135deg,
+          rgba(99, 102, 241, 0.3),
+          rgba(59, 130, 246, 0.3)
+        );
+        backdrop-filter: blur(15px);
+        border-radius: 50px;
+        color: white;
+        font-size: 0.95rem;
+        font-weight: 700;
+        letter-spacing: 0.15em;
+        margin-bottom: 1.8rem;
+        border: 2px solid rgba(255, 255, 255, 0.35);
+        box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+        text-transform: uppercase;
+      }
+
+      .project-title {
+        font-size: clamp(4rem, 10vw, 7rem);
+        font-weight: 900;
+        background: linear-gradient(
+          135deg,
+          #ffffff 0%,
+          #e0f2fe 40%,
+          #bae6fd 70%,
+          #7dd3fc 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin: 1.5rem 0;
+        animation: titleGlow 4s ease-in-out infinite,
+          fadeInUp 0.8s ease-out 0.6s;
+        animation-fill-mode: both;
+        letter-spacing: 0.1em;
+        filter: drop-shadow(0 5px 20px rgba(59, 130, 246, 0.5));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+      }
+
+      .title-icon {
+        display: inline-flex;
+        font-size: 0.75em;
+        animation: iconRotate 12s linear infinite;
+        filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.8));
+      }
+
+      @keyframes iconRotate {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes titleGlow {
+        0%,
+        100% {
+          filter: drop-shadow(0 5px 20px rgba(59, 130, 246, 0.5));
+        }
+        50% {
+          filter: drop-shadow(0 5px 35px rgba(99, 102, 241, 0.8))
+            drop-shadow(0 0 50px rgba(139, 92, 246, 0.6));
+        }
+      }
+
+      .project-subtitle {
+        font-size: clamp(1.7rem, 4vw, 2.4rem);
+        color: rgba(255, 255, 255, 0.95);
+        margin-bottom: 1.5rem;
+        animation: fadeInUp 0.8s ease-out 0.8s;
+        animation-fill-mode: both;
+        font-weight: 600;
+        text-shadow: 0 3px 12px rgba(0, 0, 0, 0.3);
+      }
+
+      .project-description {
+        margin-top: 1.2rem;
+      }
+
+      .project-description p {
+        font-size: clamp(1.05rem, 2vw, 1.4rem);
+        color: rgba(255, 255, 255, 0.85);
+        font-style: italic;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      .team-section {
+        width: 100%;
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 3rem 2rem;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.1) 0%,
+          rgba(255, 255, 255, 0.05) 100%
+        );
+        backdrop-filter: blur(25px);
+        border-radius: 24px;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 12px 45px rgba(0, 0, 0, 0.25),
+          inset 0 0 40px rgba(255, 255, 255, 0.06);
+        animation: fadeInUp 0.8s ease-out 1s;
+        animation-fill-mode: both;
+      }
+
+      .team-title {
+        font-size: clamp(1.6rem, 3vw, 2.1rem);
+        margin-bottom: 2rem;
+        color: white;
+        text-shadow: 0 3px 12px rgba(0, 0, 0, 0.3);
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.85rem;
+      }
+
+      .team-title i {
+        font-size: 1.2em;
+        background: linear-gradient(135deg, #a78bfa, #60a5fa);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.7));
+      }
+
+      .team-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1.5rem;
+        padding: 0 1rem;
+      }
+
+      .team-card {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.12) 0%,
+          rgba(255, 255, 255, 0.06) 100%
+        );
+        backdrop-filter: blur(20px);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 18px;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .team-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.18) 0%,
+          rgba(255, 255, 255, 0.1) 100%
+        );
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25),
+          0 0 30px rgba(59, 130, 246, 0.3);
+        border-color: rgba(99, 102, 241, 0.5);
+      }
+
+      .team-card-icon {
+        font-size: 2.8rem;
+        color: rgba(255, 255, 255, 0.9);
+        flex-shrink: 0;
+        filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.2));
+      }
+
+      .team-card-content {
+        flex: 1;
+        text-align: left;
+      }
+
+      .team-card-content h4 {
+        font-size: clamp(1.05rem, 2vw, 1.15rem);
+        color: white;
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+        text-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      .team-card-content p {
+        font-size: clamp(0.95rem, 2vw, 1.05rem);
+        color: rgba(255, 255, 255, 0.8);
+        margin: 0;
+        font-weight: 500;
+      }
+
+      .submission-section {
+        animation: fadeInUp 0.8s ease-out 1.2s;
+        animation-fill-mode: both;
+      }
+
+      .submission-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.85rem;
+        padding: 1.2rem 2.5rem;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.15) 0%,
+          rgba(255, 255, 255, 0.08) 100%
+        );
+        backdrop-filter: blur(25px);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50px;
+        color: white;
+        font-size: clamp(1.05rem, 2vw, 1.3rem);
+        font-weight: 700;
+        box-shadow: 0 6px 30px rgba(0, 0, 0, 0.25);
+        transition: all 0.3s ease;
+      }
+
+      .submission-badge:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3),
+          0 0 30px rgba(59, 130, 246, 0.4);
+      }
+
+      .submission-badge i {
+        font-size: 1.4em;
+        filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.6));
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(50px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .scroll-indicator {
+        position: absolute;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        animation: bounce 2s infinite;
+        color: white;
+        font-size: 1rem;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .scroll-indicator span {
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-size: 0.85rem;
+      }
+
+      .scroll-indicator i {
+        font-size: 1.5rem;
+      }
+
+      @keyframes bounce {
+        0%,
+        20%,
+        50%,
+        80%,
+        100% {
+          transform: translateX(-50%) translateY(0);
+        }
+        40% {
+          transform: translateX(-50%) translateY(-15px);
+        }
+        60% {
+          transform: translateX(-50%) translateY(-8px);
+        }
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Table of Contents */
+      .toc {
+        margin: 4rem 0;
+        background: white;
+        border-radius: 16px;
+        box-shadow: var(--shadow-lg);
+        padding: 2rem;
+        animation: fadeIn 0.6s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .toc-title {
+        font-size: clamp(1.8rem, 4vw, 2.5rem);
+        font-weight: 700;
+        color: var(--dark-text);
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 3px solid var(--primary-color);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .toc-list {
+        list-style: none;
+        display: grid;
+        gap: 0.5rem;
+      }
+
+      .toc-item {
+        border-radius: 8px;
+        transition: all 0.3s;
+      }
+
+      .toc-item:hover {
+        background: var(--card-bg);
+        transform: translateX(10px);
+      }
+
+      .toc-item a {
+        color: var(--dark-text);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        font-size: clamp(1rem, 2vw, 1.1rem);
+        transition: color 0.3s;
+      }
+
+      .toc-item a:hover {
+        color: var(--primary-color);
+      }
+
+      .toc-number {
+        font-weight: 700;
+        color: var(--primary-color);
+        font-size: 1.2rem;
+        min-width: 2rem;
+      }
+
+      /* Content Sections */
+      .section {
+        margin: 4rem 0;
+        animation: fadeInSection 0.6s ease-out;
+        scroll-margin-top: 100px;
+      }
+
+      @keyframes fadeInSection {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .section-title {
+        font-size: clamp(1.8rem, 4vw, 2.5rem);
+        font-weight: 700;
+        color: var(--dark-text);
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 3px solid var(--primary-color);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .section-title i {
+        color: var(--primary-color);
+      }
+
+      .subsection-title {
+        font-size: clamp(1.3rem, 3vw, 1.8rem);
+        font-weight: 600;
+        color: var(--dark-text);
+        margin: 2rem 0 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .subsection-title i {
+        color: var(--primary-color);
+        font-size: 0.9em;
+      }
+
+      .paragraph {
+        font-size: clamp(1rem, 2vw, 1.1rem);
+        color: var(--light-text);
+        margin-bottom: 1rem;
+        line-height: 1.8;
+        text-align: justify;
+      }
+
+      /* Lists */
+      .content-list {
+        margin: 1rem 0 1rem 1.5rem;
+        display: grid;
+        gap: 0.75rem;
+      }
+
+      .content-list li {
+        color: var(--light-text);
+        font-size: clamp(1rem, 2vw, 1.1rem);
+        line-height: 1.7;
+        position: relative;
+        padding-left: 1.5rem;
+      }
+
+      .content-list li::before {
+        content: "▹";
+        position: absolute;
+        left: 0;
+        color: var(--primary-color);
+        font-weight: bold;
+      }
+
+      .content-list li i {
+        margin-right: 0.5rem;
+      }
+
+      /* Tables */
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 2rem 0;
+        box-shadow: var(--shadow-md);
+        border-radius: 12px;
+        overflow: hidden;
+        animation: slideUp 0.6s ease-out;
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .data-table thead {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--primary-dark)
+        );
+        color: white;
+      }
+
+      .data-table th {
+        padding: 1.25rem 1rem;
+        text-align: left;
+        font-weight: 600;
+        font-size: clamp(0.95rem, 2vw, 1.1rem);
+      }
+
+      .data-table td {
+        padding: 1rem;
+        border-bottom: 1px solid var(--border-color);
+        font-size: clamp(0.9rem, 2vw, 1rem);
+      }
+
+      .data-table tbody tr {
+        transition: all 0.3s;
+      }
+
+      .data-table tbody tr:hover {
+        background: var(--card-bg);
+        transform: scale(1.01);
+      }
+
+      .data-table tbody tr:last-child td {
+        border-bottom: none;
+      }
+
+      /* Feature Boxes */
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin: 2rem 0;
+      }
+
+      .feature-box {
+        padding: 1.5rem;
+        background: white;
+        border: 2px solid var(--border-color);
+        border-radius: 12px;
+        transition: all 0.3s;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .feature-box::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(
+          180deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        transform: scaleY(0);
+        transition: transform 0.3s;
+      }
+
+      .feature-box:hover {
+        border-color: var(--primary-color);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-5px);
+      }
+
+      .feature-box:hover::before {
+        transform: scaleY(1);
+      }
+
+      .feature-box h4 {
+        color: var(--dark-text);
+        font-size: clamp(1.1rem, 2vw, 1.3rem);
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .feature-box h4 i {
+        color: var(--primary-color);
+      }
+
+      .feature-box p {
+        color: var(--light-text);
+        font-size: clamp(0.95rem, 2vw, 1rem);
+        line-height: 1.6;
+      }
+
+      /* Diagram Container */
+      .diagram-container {
+        margin: 3rem 0;
+        animation: fadeIn 0.6s ease-out;
+      }
+
+      .diagram-title {
+        font-size: clamp(1.2rem, 2vw, 1.5rem);
+        font-weight: 600;
+        color: var(--dark-text);
+        margin-bottom: 1.5rem;
+        text-align: center;
+      }
+
+      .diagram-wrapper {
+        width: 100%;
+        background: white;
+        border: 2px solid var(--border-color);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: var(--shadow-md);
+        margin: 1.5rem 0;
+        transition: all 0.3s;
+      }
+
+      .diagram-wrapper:hover {
+        box-shadow: var(--shadow-lg);
+      }
+
+      .diagram-iframe {
+        width: 100%;
+        height: 800px;
+        border: none;
+        display: block;
+      }
+
+      .diagram-caption {
+        text-align: center;
+        font-size: clamp(0.95rem, 2vw, 1rem);
+        color: var(--light-text);
+        font-style: italic;
+        margin-top: 1rem;
+      }
+
+      /* Screenshot Grid */
+      .screenshot-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin: 2rem 0;
+      }
+
+      .screenshot-item {
+        text-align: center;
+        animation: fadeIn 0.6s ease-out;
+      }
+
+      .screenshot-placeholder {
+        width: 100%;
+        min-height: 300px;
+        background: linear-gradient(135deg, var(--card-bg), #e0e7ff);
+        border: 2px dashed var(--border-color);
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+        transition: all 0.3s;
+        cursor: pointer;
+      }
+
+      .screenshot-placeholder:hover {
+        border-color: var(--primary-color);
+        background: linear-gradient(135deg, #e0e7ff, var(--card-bg));
+        transform: scale(1.02);
+      }
+
+      .screenshot-placeholder i {
+        font-size: 3rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      .screenshot-caption {
+        font-size: clamp(0.95rem, 2vw, 1rem);
+        color: var(--light-text);
+        font-style: italic;
+      }
+
+      /* Highlight Box */
+      .highlight-box {
+        background: linear-gradient(135deg, #eff6ff, #dbeafe);
+        border-left: 4px solid var(--primary-color);
+        padding: 1.5rem;
+        margin: 2rem 0;
+        border-radius: 8px;
+        box-shadow: var(--shadow-sm);
+        transition: all 0.3s;
+      }
+
+      .highlight-box:hover {
+        box-shadow: var(--shadow-md);
+        transform: translateX(5px);
+      }
+
+      .highlight-box h4 {
+        color: var(--primary-dark);
+        font-size: clamp(1.1rem, 2vw, 1.3rem);
+        margin-bottom: 0.75rem;
+      }
+
+      /* Tech Badges */
+      .tech-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin: 1.5rem 0;
+      }
+
+      .tech-badge {
+        padding: 0.6rem 1.2rem;
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--primary-dark)
+        );
+        color: white;
+        border-radius: 25px;
+        font-size: clamp(0.85rem, 2vw, 0.95rem);
+        font-weight: 500;
+        transition: all 0.3s;
+        cursor: pointer;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .tech-badge:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-md);
+        background: linear-gradient(
+          135deg,
+          var(--primary-dark),
+          var(--secondary-color)
+        );
+      }
+
+      .tech-badge i {
+        margin-right: 0.5rem;
+      }
+
+      /* Action Buttons */
+      .action-buttons {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        z-index: 999;
+      }
+
+      .action-btn {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--primary-dark)
+        );
+        color: white;
+        border: none;
+        font-size: 1.25rem;
+        cursor: pointer;
+        box-shadow: var(--shadow-lg);
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .action-btn:hover {
+        transform: translateY(-3px) scale(1.1);
+        box-shadow: var(--shadow-xl);
+      }
+
+      .scroll-to-top {
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
+      }
+
+      .scroll-to-top.visible {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      /* Loading Animation */
+      .loading-indicator {
+        text-align: center;
+        padding: 3rem;
+        color: var(--light-text);
+      }
+
+      .loading-indicator i {
+        font-size: 2rem;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Stats Cards */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin: 2rem 0;
+      }
+
+      .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: var(--shadow-md);
+        border-top: 4px solid var(--primary-color);
+        transition: all 0.3s;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .stat-card h3 {
+        color: var(--light-text);
+        font-size: 0.95rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .stat-card .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--dark-text);
+      }
+
+      .stat-card i {
+        font-size: 2rem;
+        color: var(--primary-color);
+        opacity: 0.3;
+        float: right;
+      }
+
+      /* Footer */
+      .footer {
+        margin-top: 5rem;
+        padding: 3rem 0;
+        border-top: 3px solid var(--border-color);
+        text-align: center;
+        background: var(--card-bg);
+      }
+
+      .footer-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem;
+      }
+
+      .footer-title {
+        font-size: clamp(1.3rem, 3vw, 1.5rem);
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .footer-text {
+        font-size: clamp(0.95rem, 2vw, 1rem);
+        color: var(--light-text);
+        margin: 0.5rem 0;
+      }
+
+      .footer-divider {
+        font-style: italic;
+        color: var(--light-text);
+        margin-top: 2rem;
+      }
+
+      /* Responsive Table Wrapper */
+      .table-wrapper {
+        overflow-x: auto;
+        margin: 2rem 0;
+        border-radius: 12px;
+        box-shadow: var(--shadow-md);
+      }
+
+      /* Print Styles */
+      @media print {
+        .navbar,
+        .action-buttons,
+        .scroll-indicator,
+        .menu-toggle,
+        .mobile-menu,
+        .mobile-overlay {
+          display: none !important;
+        }
+
+        .container {
+          padding-top: 0;
+        }
+
+        .section {
+          page-break-inside: avoid;
+        }
+
+        .cover-page {
+          page-break-after: always;
+        }
+
+        .toc {
+          page-break-after: always;
+        }
+
+        a {
+          color: var(--dark-text);
+          text-decoration: none;
+        }
+
+        .diagram-iframe {
+          height: 600px;
+        }
+      }
+
+      /* Tablet Responsive */
+      @media (max-width: 1024px) {
+        .navbar-menu {
+          gap: 1.5rem;
+        }
+
+        .feature-grid {
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+
+        .diagram-iframe {
+          height: 700px;
+        }
+      }
+
+      /* Mobile Responsive */
+      @media (max-width: 768px) {
+        .container {
+          padding: 70px 1rem 1rem;
+        }
+
+        .navbar-content {
+          padding: 1rem;
+        }
+
+        .navbar-menu {
+          display: none;
+        }
+
+        .menu-toggle {
+          display: block;
+        }
+
+        .cover-page {
+          padding: 3rem 1rem;
+          margin: -70px -1rem 0;
+        }
+
+        .university-logo {
+          width: 90px;
+          height: 90px;
+          font-size: 2.5rem;
+          margin-bottom: 1rem;
+        }
+
+        .cover-content {
+          gap: 2rem;
+        }
+
+        .divider-line {
+          width: 60px;
+          margin: 1rem auto;
+        }
+
+        .project-section {
+          padding: 2rem 1rem;
+          border-radius: 16px;
+        }
+
+        .project-badge {
+          font-size: 0.75rem;
+          padding: 0.4rem 1rem;
+        }
+
+        .project-title {
+          gap: 0.5rem;
+          flex-direction: column;
+        }
+
+        .title-icon {
+          font-size: 0.6em;
+        }
+
+        .team-cards {
+          grid-template-columns: 1fr;
+          gap: 1rem;
+          padding: 0;
+        }
+
+        .team-card {
+          padding: 1rem;
+          flex-direction: column;
+          text-align: center;
+        }
+
+        .team-card-content {
+          text-align: center;
+        }
+
+        .team-card-icon {
+          font-size: 2rem;
+        }
+
+        .submission-badge {
+          padding: 0.75rem 1.5rem;
+          font-size: 0.9rem;
+        }
+
+        .geometric-shape {
+          opacity: 0.5;
+        }
+
+        .shape-1 {
+          width: 200px;
+          height: 200px;
+        }
+
+        .shape-2 {
+          width: 150px;
+          height: 150px;
+        }
+
+        .shape-3 {
+          width: 100px;
+          height: 100px;
+        }
+
+        .shape-4 {
+          width: 180px;
+          height: 180px;
+        }
+
+        .feature-grid,
+        .screenshot-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .diagram-iframe {
+          height: 600px;
+        }
+
+        .action-buttons {
+          bottom: 1rem;
+          right: 1rem;
+        }
+
+        .action-btn {
+          width: 48px;
+          height: 48px;
+          font-size: 1rem;
+        }
+
+        .toc {
+          padding: 1.5rem;
+        }
+
+        .toc-list {
+          font-size: 0.95rem;
+        }
+
+        .data-table {
+          font-size: 0.85rem;
+        }
+
+        .data-table th,
+        .data-table td {
+          padding: 0.75rem 0.5rem;
+        }
+
+        .tech-badges {
+          gap: 0.5rem;
+        }
+
+        .tech-badge {
+          padding: 0.5rem 1rem;
+          font-size: 0.85rem;
+        }
+
+        .stats-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Small Mobile */
+      @media (max-width: 480px) {
+        .section {
+          margin: 3rem 0;
+        }
+
+        .paragraph {
+          text-align: left;
+        }
+
+        .feature-box {
+          padding: 1rem;
+        }
+
+        .highlight-box {
+          padding: 1rem;
+        }
+
+        .screenshot-placeholder {
+          min-height: 250px;
+        }
+
+        .screenshot-placeholder i {
+          font-size: 2rem;
+        }
+
+        .team-cards {
+          gap: 0.75rem;
+        }
+
+        .team-card {
+          padding: 0.75rem;
+        }
+
+        .team-card-icon {
+          font-size: 1.8rem;
+        }
+
+        .project-section {
+          padding: 1.5rem 0.75rem;
+        }
+
+        .university-logo {
+          width: 80px;
+          height: 80px;
+          font-size: 2rem;
+        }
+      }
+
+      /* Landscape Mode for Mobile */
+      @media (max-height: 500px) and (orientation: landscape) {
+        .cover-page {
+          min-height: auto;
+          padding: 2rem 1rem;
+        }
+
+        .university-logo {
+          width: 80px;
+          height: 80px;
+          font-size: 2rem;
+        }
+
+        .scroll-indicator {
+          display: none;
+        }
+      }
+
+      /* Dark Mode Support (Optional) */
+      @media (prefers-color-scheme: dark) {
+        /* Add dark mode styles if needed */
+      }
+
+      /* Accessibility Improvements */
+      .visually-hidden {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        padding: 0;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      /* Focus Styles */
+      *:focus {
+        outline: 2px solid var(--primary-color);
+        outline-offset: 2px;
+      }
+
+      button:focus,
+      a:focus {
+        outline: 2px solid var(--primary-color);
+        outline-offset: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Progress Bar -->
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar" id="navbar">
+      <div class="navbar-content">
+        <div class="navbar-logo">
+          <i class="fas fa-book-open"></i>
+          <span>Kitabi</span>
+        </div>
+        <ul class="navbar-menu">
+          <li><a href="#section1">Introduction</a></li>
+          <li><a href="#section3">Overview</a></li>
+          <li><a href="#section4">Features</a></li>
+          <li><a href="#section7">Diagrams</a></li>
+          <li><a href="#section10">Conclusion</a></li>
+        </ul>
+        <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+    <div class="mobile-menu" id="mobileMenu">
+      <div class="mobile-menu-header">
+        <div class="navbar-logo">
+          <i class="fas fa-book-open"></i>
+          <span>Kitabi</span>
+        </div>
+        <button
+          class="mobile-menu-close"
+          id="menuClose"
+          aria-label="Close menu"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <ul class="mobile-menu-list">
+        <li><a href="#section1">Introduction</a></li>
+        <li><a href="#section2">Requirements</a></li>
+        <li><a href="#section3">System Overview</a></li>
+        <li><a href="#section4">Functional Requirements</a></li>
+        <li><a href="#section5">Non-Functional Requirements</a></li>
+        <li><a href="#section6">Technology Stack</a></li>
+        <li><a href="#section7">UML Diagrams</a></li>
+        <li><a href="#section8">Screenshots</a></li>
+        <li><a href="#section9">Use Cases</a></li>
+        <li><a href="#section10">Conclusion</a></li>
+      </ul>
+    </div>
+
+    <div class="container">
+      <!-- Cover Page -->
+      <div class="cover-page">
+        <div class="cover-background">
+          <div class="geometric-shape shape-1"></div>
+          <div class="geometric-shape shape-2"></div>
+          <div class="geometric-shape shape-3"></div>
+          <div class="geometric-shape shape-4"></div>
+        </div>
+
+        <div class="cover-content">
+          <div class="university-section">
+            <div class="university-logo">
+              <i class="fas fa-university"></i>
+            </div>
+            <h1 class="university-name">The Hashemite University</h1>
+            <div class="divider-line"></div>
+            <h2 class="department-name">Department of Software Engineering</h2>
+            <p class="course-info">
+              Design Course - Course Project<br />First Semester 2025-2026
+            </p>
+          </div>
+
+          <div class="project-section">
+            <div class="project-badge">COURSE PROJECT</div>
+            <h1 class="project-title">
+              <span class="title-icon"><i class="fas fa-book-open"></i></span>
+              KITABI
+            </h1>
+            <h2 class="project-subtitle">Library Management System</h2>
+            <div class="project-description">
+              <p>A Modern, Bilingual Solution for Educational Institutions</p>
+            </div>
+          </div>
+
+          <div class="team-section">
+            <h3 class="team-title">
+              <i class="fas fa-users"></i>
+              Project Team Members
+            </h3>
+            <div class="team-cards">
+              <div class="team-card">
+                <div class="team-card-icon">
+                  <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="team-card-content">
+                  <h4>عبد الرحمن هاني الزرو</h4>
+                  <p>ID: 2038501</p>
+                </div>
+              </div>
+              <div class="team-card">
+                <div class="team-card-icon">
+                  <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="team-card-content">
+                  <h4>هديل عبدالله صالح الغويري</h4>
+                  <p>ID: 2043659</p>
+                </div>
+              </div>
+              <div class="team-card">
+                <div class="team-card-icon">
+                  <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="team-card-content">
+                  <h4>فاطمة وائل احمد حسن الحاج</h4>
+                  <p>ID: 2146700</p>
+                </div>
+              </div>
+              <div class="team-card">
+                <div class="team-card-icon">
+                  <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="team-card-content">
+                  <h4>محمد احمد ابو هويدي</h4>
+                  <p>ID: 1934446</p>
+                </div>
+              </div>
+              <div class="team-card">
+                <div class="team-card-icon">
+                  <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="team-card-content">
+                  <h4>نورالدين نزار نوح صالح</h4>
+                  <p>ID: 2238835</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="submission-section">
+            <div class="submission-badge">
+              <i class="fas fa-calendar-alt"></i>
+              <span>Submission Date: January 2026</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table of Contents -->
+      <div class="toc" id="toc">
+        <h2 class="toc-title"><i class="fas fa-list"></i> Table of Contents</h2>
+        <ul class="toc-list">
+          <li class="toc-item">
+            <a href="#section1"
+              ><span class="toc-number">1.</span> Introduction</a
+            >
+          </li>
+          <li class="toc-item">
+            <a href="#section2"
+              ><span class="toc-number">2.</span> Course Project Requirements</a
+            >
+          </li>
+          <li class="toc-item">
+            <a href="#section3"
+              ><span class="toc-number">3.</span> System Overview</a
+            >
+          </li>
+          <li class="toc-item">
+            <a href="#section4"
+              ><span class="toc-number">4.</span> Functional Requirements</a
+            >
+          </li>
+          <li class="toc-item">
+            <a href="#section5"
+              ><span class="toc-number">5.</span> Non-Functional Requirements</a
+            >
+          </li>
+          <li class="toc-item">
+            <a href="#section6"
+              ><span class="toc-number">6.</span> Technology Stack</a
+            >
+          </li>
+          <li class="toc-item">
+            <a href="#section7"
+              ><span class="toc-number">7.</span> UML Diagrams</a
+            >
+          </li>
+          <li class="toc-item">
+            <a href="#section8"
+              ><span class="toc-number">8.</span> System Screenshots</a
+            >
+          </li>
+          <li class="toc-item">
+            <a href="#section9"
+              ><span class="toc-number">9.</span> Core Use Cases</a
+            >
+          </li>
+          <li class="toc-item">
+            <a href="#section10"
+              ><span class="toc-number">10.</span> Conclusion</a
+            >
+          </li>
+          <li class="toc-item">
+            <a href="#appendix"><span class="toc-number">11.</span> Appendix</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Section 1: Introduction -->
+      <div id="section1" class="section">
+        <h2 class="section-title">
+          <i class="fas fa-info-circle"></i> 1. Introduction
+        </h2>
+        <p class="paragraph">
+          Kitabi is a comprehensive, modern library management system designed
+          to streamline the operations of libraries and educational
+          institutions. The platform provides a complete digital solution for
+          managing book borrowing, hall bookings, book acquisition suggestions,
+          user management, and administrative operations.
+        </p>
+        <p class="paragraph">
+          Built with a bilingual (English/Arabic) interface and real-time
+          notification system, Kitabi offers both patrons and administrators an
+          intuitive, feature-rich experience. The system is designed for
+          scalability, security, and ease of use, making it suitable for
+          libraries of all sizes.
+        </p>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <i class="fas fa-book"></i>
+            <h3>Book Management</h3>
+            <div class="stat-value">∞</div>
+          </div>
+          <div class="stat-card">
+            <i class="fas fa-users"></i>
+            <h3>User Accounts</h3>
+            <div class="stat-value">∞</div>
+          </div>
+          <div class="stat-card">
+            <i class="fas fa-building"></i>
+            <h3>Available Halls</h3>
+            <div class="stat-value">6</div>
+          </div>
+          <div class="stat-card">
+            <i class="fas fa-language"></i>
+            <h3>Languages</h3>
+            <div class="stat-value">2</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Course Project Requirements -->
+      <div id="section2" class="section">
+        <h2 class="section-title">
+          <i class="fas fa-tasks"></i> 2. Course Project Requirements
+        </h2>
+
+        <h3 class="subsection-title">
+          <i class="fas fa-file-alt"></i> 2.1 Overview
+        </h3>
+        <p class="paragraph">
+          This project was developed as part of the Software Engineering Design
+          course at The Hashemite University for the First Semester 2025-2026.
+          The project requirements included creating a mobile/web application
+          for a library system with an excellent interface.
+        </p>
+
+        <h3 class="subsection-title">
+          <i class="fas fa-check-double"></i> 2.2 Required Functions
+        </h3>
+        <p class="paragraph">
+          The system must include the following core functions:
+        </p>
+        <ul class="content-list">
+          <li>
+            <i class="fas fa-check-circle" style="color: #10b981"></i> Search
+            for a book
+          </li>
+          <li>
+            <i class="fas fa-check-circle" style="color: #10b981"></i> Book an
+            existing book (reservation)
+          </li>
+          <li>
+            <i class="fas fa-check-circle" style="color: #10b981"></i> Suggest a
+            book to be bought by the library
+          </li>
+          <li>
+            <i class="fas fa-check-circle" style="color: #10b981"></i> Search
+            for a suitable hall to make an event
+          </li>
+          <li>
+            <i class="fas fa-check-circle" style="color: #10b981"></i> Book a
+            time and a hall
+          </li>
+        </ul>
+
+        <h3 class="subsection-title">
+          <i class="fas fa-door-open"></i> 2.3 Available Halls
+        </h3>
+        <p class="paragraph">
+          The following halls are available for booking in the system:
+        </p>
+        <div class="feature-grid">
+          <div class="feature-box">
+            <h4><i class="fas fa-building"></i> The American Corner</h4>
+            <p>Modern facility for events and gatherings</p>
+          </div>
+          <div class="feature-box">
+            <h4><i class="fas fa-building"></i> Prince Hussain Corner</h4>
+            <p>Premium space for special occasions</p>
+          </div>
+          <div class="feature-box">
+            <h4><i class="fas fa-building"></i> Disabilities Corner</h4>
+            <p>Accessible facility for inclusive events</p>
+          </div>
+          <div class="feature-box">
+            <h4><i class="fas fa-building"></i> Children Corner</h4>
+            <p>Kid-friendly space for educational activities</p>
+          </div>
+          <div class="feature-box">
+            <h4><i class="fas fa-building"></i> Khadija Corner</h4>
+            <p>Versatile hall for various purposes</p>
+          </div>
+          <div class="feature-box">
+            <h4><i class="fas fa-building"></i> Wikipedia Corner</h4>
+            <p>Digital learning and collaboration space</p>
+          </div>
+        </div>
+
+        <h3 class="subsection-title">
+          <i class="fas fa-clipboard-list"></i> 2.4 Project Deliverables
+        </h3>
+        <p class="paragraph">
+          The project includes the following deliverables:
+        </p>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Deliverable</th>
+                <th>Points</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Documentation</strong></td>
+                <td>5 points</td>
+                <td>Comprehensive system documentation</td>
+              </tr>
+              <tr>
+                <td><strong>Prototype</strong></td>
+                <td>5 points</td>
+                <td>Functional prototype with interface and features</td>
+              </tr>
+              <tr>
+                <td><strong>UML Diagrams</strong></td>
+                <td>5 points</td>
+                <td>Use Case, Class, and Data Flow Diagrams</td>
+              </tr>
+              <tr>
+                <td><strong>Presentation</strong></td>
+                <td>5 points</td>
+                <td>In-class demonstration and presentation</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Section 3: System Overview -->
+      <div id="section3" class="section">
+        <h2 class="section-title">
+          <i class="fas fa-laptop-code"></i> 3. System Overview
+        </h2>
+
+        <h3 class="subsection-title">
+          <i class="fas fa-bullseye"></i> 3.1 System Purpose
+        </h3>
+        <p class="paragraph">
+          Kitabi serves as a comprehensive digital solution for library
+          management, bridging the gap between traditional library operations
+          and modern technology. The system aims to provide an efficient,
+          user-friendly platform that benefits both library patrons and
+          administrators.
+        </p>
+
+        <h3 class="subsection-title">
+          <i class="fas fa-star"></i> 3.2 Key Features
+        </h3>
+        <ul class="content-list">
+          <li>
+            Comprehensive book management with real-time inventory tracking
+          </li>
+          <li>Intelligent hall booking system with conflict prevention</li>
+          <li>Community engagement through book suggestion workflow</li>
+          <li>Real-time notifications via Socket.IO and email</li>
+          <li>Full bilingual support (English/Arabic) with RTL layout</li>
+          <li>Powerful admin dashboard with analytics and reports</li>
+          <li>Complete activity logging and audit trails</li>
+          <li>Role-based access control (User/Admin)</li>
+        </ul>
+
+        <h3 class="subsection-title">
+          <i class="fas fa-users-cog"></i> 3.3 Target Users
+        </h3>
+        <div class="feature-grid">
+          <div class="feature-box">
+            <h4><i class="fas fa-user-graduate"></i> Students</h4>
+            <p>Browse books, make reservations, book halls, suggest books</p>
+          </div>
+          <div class="feature-box">
+            <h4><i class="fas fa-chalkboard-teacher"></i> Faculty Members</h4>
+            <p>Access library resources, book halls for events</p>
+          </div>
+          <div class="feature-box">
+            <h4><i class="fas fa-user-shield"></i> Librarians/Admins</h4>
+            <p>Manage entire library operations, generate reports</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 4: Functional Requirements -->
+      <div id="section4" class="section">
+        <h2 class="section-title">
+          <i class="fas fa-cogs"></i> 4. Functional Requirements
+        </h2>
+
+        <h3 class="subsection-title">
+          <i class="fas fa-user-lock"></i> 4.1 User Management & Authentication
+        </h3>
+        <ul class="content-list">
+          <li>User registration with email verification</li>
+          <li>Secure login with JWT authentication</li>
+          <li>Password reset via OTP (6-digit code) sent via email</li>
+          <li>Role-based access control (User/Admin)</li>
+          <li>User profile management</li>
+          <li>Session persistence with auto-logout on token expiry</li>
+        </ul>
+
+        <h3 class="subsection-title">
+          <i class="fas fa-books"></i> 4.2 Book Catalog & Borrowing System
+        </h3>
+        <ul class="content-list">
+          <li>Search books by title, author, or category</li>
+          <li>View book details with bilingual titles/authors/descriptions</li>
+          <li>Reserve books with specified reservation and return dates</li>
+          <li>Real-time inventory tracking (available vs total copies)</li>
+          <li>View personal reservation history with status tracking</li>
+          <li>Return books with automatic inventory updates</li>
+          <li>Overdue detection with automatic status updates</li>
+          <li>
+            Status tracking: Pending, Active, Completed, Cancelled, Overdue
+          </li>
+          <li>Prevent double-booking of unavailable books</li>
+        </ul>
+
+        <h3 class="subsection-title">
+          <i class="fas fa-calendar-check"></i> 4.3 Hall Booking System
+        </h3>
+        <ul class="content-list">
+          <li>Search available halls by capacity and time availability</li>
+          <li>
+            View hall details including amenities and bilingual
+            names/descriptions
+          </li>
+          <li>
+            Book halls for events with event name, time range, and purpose
+          </li>
+          <li>Real-time conflict detection to prevent double-bookings</li>
+          <li>View personal booking history</li>
+          <li>Status management: Pending, Confirmed, Cancelled</li>
+          <li>Filter by minimum capacity requirements</li>
+        </ul>
+
+        <h3 class="subsection-title">
+          <i class="fas fa-lightbulb"></i> 4.4 Book Suggestion System
+        </h3>
+        <ul class="content-list">
+          <li>Submit book suggestions with title, author, and reason</li>
+          <li>
+            Track suggestion status (Pending, Approved, Rejected, Purchased)
+          </li>
+          <li>View personal suggestion history</li>
+          <li>Admin review workflow with status updates and notes</li>
+        </ul>
+
+        <h3 class="subsection-title">
+          <i class="fas fa-bell"></i> 4.5 Real-time Notification System
+        </h3>
+        <ul class="content-list">
+          <li>Real-time push notifications via Socket.IO</li>
+          <li>Desktop notifications (browser-based with permission)</li>
+          <li>
+            Toast notifications with priority levels (Low, Normal, High, Urgent)
+          </li>
+          <li>Bilingual notification messages</li>
+          <li>Mark as read/unread functionality</li>
+          <li>Delete notifications and track unread count</li>
+        </ul>
+
+        <h3 class="subsection-title">
+          <i class="fas fa-chart-line"></i> 4.6 Admin Dashboard
+        </h3>
+        <ul class="content-list">
+          <li>Comprehensive overview with key statistics</li>
+          <li>Total books, users, active reservations, overdue items</li>
+          <li>Recent activity feed</li>
+          <li>Quick access to all management sections</li>
+        </ul>
+
+        <h3 class="subsection-title">
+          <i class="fas fa-chart-bar"></i> 4.7 Reports & Analytics
+        </h3>
+        <ul class="content-list">
+          <li>Dashboard Summary: Quick stats for all resources</li>
+          <li>Most Borrowed Books: Ranking with date range filters</li>
+          <li>Inventory Report: Total/available/borrowed copies per book</li>
+          <li>Category Statistics: Distribution of books by category</li>
+          <li>
+            Monthly Activity: Trend analysis for reservations and bookings
+          </li>
+          <li>
+            Overdue Summary: List of overdue reservations with days overdue
+          </li>
+          <li>User Activity Reports: Per-user borrowing and booking history</li>
+        </ul>
+      </div>
+
+      <!-- Section 5: Non-Functional Requirements -->
+      <div id="section5" class="section">
+        <h2 class="section-title">
+          <i class="fas fa-shield-alt"></i> 5. Non-Functional Requirements
+        </h2>
+
+        <h3 class="subsection-title">
+          <i class="fas fa-lock"></i> 5.1 Security
+        </h3>
+        <ul class="content-list">
+          <li>JWT-based authentication with secure token handling</li>
+          <li>Password hashing using bcryptjs (salt round 10)</li>
+          <li>Protected routes with authentication middleware</li>
+          <li>Role-based authorization (admin middleware)</li>
+          <li>Input validation using Zod schemas</li>
+          <li>XSS and SQL injection prevention via ORM</li>
+          <li>Activity logging for audit trails</li>
+        </ul>
+
+        <h3 class="subsection-title">
+          <i class="fas fa-tachometer-alt"></i> 5.2 Performance
+        </h3>
+        <ul class="content-list">
+          <li>PostgreSQL database with indexed queries</li>
+          <li>React Query caching for optimized API calls</li>
+          <li>Real-time updates via Socket.IO (bidirectional)</li>
+          <li>Vite for fast development and optimized production builds</li>
+        </ul>
+
+        <h3 class="subsection-title">
+          <i class="fas fa-smile"></i> 5.3 Usability
+        </h3>
+        <ul class="content-list">
+          <li>Intuitive, modern UI with gradient designs</li>
+          <li>Responsive design (mobile-first approach)</li>
+          <li>Loading states and user-friendly error messages</li>
+          <li>Accessibility considerations (semantic HTML, ARIA labels)</li>
+        </ul>
+
+        <h3 class="subsection-title">
+          <i class="fas fa-sync"></i> 5.4 Reliability
+        </h3>
+        <ul class="content-list">
+          <li>Error handling at all layers</li>
+          <li>Graceful degradation for failed requests</li>
+          <li>Database constraints to maintain data integrity</li>
+          <li>Email verification to ensure valid user accounts</li>
+        </ul>
+      </div>
+
+      <!-- Section 6: Technology Stack -->
+      <div id="section6" class="section">
+        <h2 class="section-title">
+          <i class="fas fa-layer-group"></i> 6. Technology Stack
+        </h2>
+
+        <h3 class="subsection-title">
+          <i class="fas fa-server"></i> 6.1 Backend Technologies
+        </h3>
+        <div class="tech-badges">
+          <span class="tech-badge"><i class="fab fa-node-js"></i> Node.js</span>
+          <span class="tech-badge">Express.js</span>
+          <span class="tech-badge">TypeScript</span>
+          <span class="tech-badge"
+            ><i class="fas fa-database"></i> PostgreSQL</span
+          >
+          <span class="tech-badge">Drizzle ORM</span>
+          <span class="tech-badge">JWT</span>
+          <span class="tech-badge">bcryptjs</span>
+          <span class="tech-badge">Socket.IO</span>
+          <span class="tech-badge"
+            ><i class="fas fa-envelope"></i> Nodemailer</span
+          >
+          <span class="tech-badge">Zod</span>
+          <span class="tech-badge">i18next</span>
+        </div>
+
+        <h3 class="subsection-title">
+          <i class="fas fa-desktop"></i> 6.2 Frontend Technologies
+        </h3>
+        <div class="tech-badges">
+          <span class="tech-badge"><i class="fab fa-react"></i> React 18</span>
+          <span class="tech-badge">TypeScript</span>
+          <span class="tech-badge">Vite</span>
+          <span class="tech-badge">React Router v6</span>
+          <span class="tech-badge">TailwindCSS</span>
+          <span class="tech-badge">React Query</span>
+          <span class="tech-badge">Axios</span>
+          <span class="tech-badge">Socket.io-client</span>
+          <span class="tech-badge">React Hook Form</span>
+          <span class="tech-badge">Radix UI</span>
+          <span class="tech-badge">Sonner</span>
+          <span class="tech-badge">Lucide React</span>
+        </div>
+      </div>
+
+      <!-- Section 7: UML Diagrams -->
+      <div id="section7" class="section">
+        <h2 class="section-title">
+          <i class="fas fa-project-diagram"></i> 7. UML Diagrams
+        </h2>
+
+        <h3 class="subsection-title">
+          <i class="fas fa-sitemap"></i> 7.1 Use Case Diagram
+        </h3>
+        <p class="paragraph">
+          The Use Case Diagram illustrates the interactions between users
+          (Students/Patrons and Administrators) and the Kitabi system. It shows
+          the various functionalities available to each type of user, including
+          book management, hall booking, suggestions, and administrative
+          functions.
+        </p>
+
+        <div class="diagram-container">
+          <div class="diagram-wrapper">
+            <iframe
+              src="kitabi-usecase-diagram.html"
+              class="diagram-iframe"
+              title="Use Case Diagram"
+              loading="lazy"
+            ></iframe>
+          </div>
+          <p class="diagram-caption">
+            Figure 7.1: Use Case Diagram - System Interactions
+          </p>
+        </div>
+
+        <h3 class="subsection-title">
+          <i class="fas fa-cubes"></i> 7.2 Class Diagram
+        </h3>
+        <p class="paragraph">
+          The Class Diagram represents the structure of the Kitabi system,
+          showing the main classes, their attributes, methods, and
+          relationships. It includes core entities such as User, Book,
+          Reservation, Hall, HallBooking, BookSuggestion, Notification, and
+          ActivityLog.
+        </p>
+
+        <div class="diagram-container">
+          <div class="diagram-wrapper">
+            <iframe
+              src="kitabi-class-diagram.html"
+              class="diagram-iframe"
+              title="Class Diagram"
+              loading="lazy"
+            ></iframe>
+          </div>
+          <p class="diagram-caption">
+            Figure 7.2: Class Diagram - System Structure
+          </p>
+        </div>
+
+        <h3 class="subsection-title">
+          <i class="fas fa-stream"></i> 7.3 Data Flow Diagram (DFD)
+        </h3>
+        <p class="paragraph">
+          The Data Flow Diagram shows how data flows through the Kitabi system.
+          The Level 0 context diagram presents a high-level view of the system
+          interactions, while Level 1 shows the detailed processes including
+          user authentication, book management, hall booking, suggestions,
+          notifications, admin functions, data storage, and internationalization
+          support.
+        </p>
+
+        <div class="diagram-container">
+          <div class="diagram-wrapper">
+            <iframe
+              src="kitabi-dfd.html"
+              class="diagram-iframe"
+              title="Data Flow Diagram"
+              loading="lazy"
+            ></iframe>
+          </div>
+          <p class="diagram-caption">
+            Figure 7.3: Data Flow Diagram - Information Flow
+          </p>
+        </div>
+      </div>
+
+      <!-- Section 8: System Screenshots -->
+      <div id="section8" class="section">
+        <h2 class="section-title">
+          <i class="fas fa-images"></i> 8. System Screenshots
+        </h2>
+        <p class="paragraph">
+          This section showcases the actual implementation of the Kitabi system,
+          demonstrating the user interface, functionality, and user experience
+          across different modules.
+        </p>
+
+        <h3 class="subsection-title">
+          <i class="fas fa-sign-in-alt"></i> 8.1 User Authentication
+        </h3>
+        <div class="screenshot-grid">
+          <div class="screenshot-item">
+            <img
+              src="./images/Screenshot 2026-01-08 194529.png"
+              alt="Login Page Screenshot"
+              class="screenshot-image"
+            />
+            <p class="screenshot-caption">Figure 8.1: User login interface</p>
+          </div>
+          <div class="screenshot-item">
+            <img
+              src="./images/Screenshot 2026-01-08 194540.png"
+              alt="Registration Page Screenshot"
+              class="screenshot-image"
+            />
+            <p class="screenshot-caption">
+              Figure 8.2: User registration interface
+            </p>
+          </div>
+        </div>
+
+        <h3 class="subsection-title">
+          <i class="fas fa-book-reader"></i> 8.2 Book Catalog
+        </h3>
+        <div class="screenshot-grid">
+          <div class="screenshot-item">
+            <img
+              src="./images/Screenshot 2026-01-08 194603.png"
+              alt="Book Catalog Screenshot"
+              class="screenshot-image"
+            />
+            <p class="screenshot-caption">
+              Figure 8.3: Book catalog with search functionality
+            </p>
+          </div>
+          <div class="screenshot-item">
+            <img
+              src="./images/Screenshot 2026-01-08 194613.png"
+              alt="Book Details Screenshot"
+              class="screenshot-image"
+            />
+            <p class="screenshot-caption">
+              Figure 8.4: Detailed book information page
+            </p>
+          </div>
+        </div>
+
+        <h3 class="subsection-title">
+          <i class="fas fa-bookmark"></i> 8.3 Book Reservation
+        </h3>
+        <div class="screenshot-grid">
+          <div class="screenshot-item">
+            <img
+              src="./images/Screenshot 2026-01-08 194817.png"
+              alt="Book Reservation Screenshot"
+              class="screenshot-image"
+            />
+            <p class="screenshot-caption">Figure 8.5: Book reservation form</p>
+          </div>
+          <div class="screenshot-item">
+            <img
+              src="./images/Screenshot 2026-01-08 194817.png"
+              alt="Reservation History Screenshot"
+              class="screenshot-image"
+            />
+            <p class="screenshot-caption">
+              Figure 8.6: User reservation history
+            </p>
+          </div>
+        </div>
+
+        <h3 class="subsection-title">
+          <i class="fas fa-calendar-alt"></i> 8.4 Hall Booking
+        </h3>
+        <div class="screenshot-grid">
+          <div class="screenshot-item">
+            <img
+              src="./images/Screenshot 2026-01-08 195705.png"
+              alt="Hall Catalog Screenshot"
+              class="screenshot-image"
+            />
+            <p class="screenshot-caption">
+              Figure 8.7: Available halls listing
+            </p>
+          </div>
+          <div class="screenshot-item">
+            <img
+              src="./images/Screenshot 2026-01-08 195714.png"
+              alt="Hall Booking Screenshot"
+              class="screenshot-image"
+            />
+            <p class="screenshot-caption">Figure 8.8: Hall booking form</p>
+          </div>
+        </div>
+
+        <div class="screenshot-grid">
+          <div class="screenshot-item">
+            <img
+              src="./images/Screenshot 2026-01-08 195723.png"
+              alt="Book Suggestion Form Screenshot"
+              class="screenshot-image"
+            />
+            <p class="screenshot-caption">
+              Figure 8.9: Book suggestion submission
+            </p>
+          </div>
+          <div class="screenshot-item">
+            <img
+              src="./images/Screenshot 2026-01-08 195733.png"
+              alt="Suggestions History Screenshot"
+              class="screenshot-image"
+            />
+            <p class="screenshot-caption">
+              Figure 8.10: User suggestion history with status
+            </p>
+          </div>
+        </div>
+
+        <h3 class="subsection-title">
+          <i class="fas fa-bell"></i> 8.6 Notifications
+        </h3>
+        <div class="screenshot-item" style="max-width: 600px; margin: 0 auto">
+          <img
+            src="./images/Screenshot 2026-01-08 195723.png"
+            alt="Notifications Screenshot"
+            class="screenshot-image"
+          />
+          <p class="screenshot-caption">
+            Figure 8.11: Real-time notification system
+          </p>
+        </div>
+
+        <h3 class="subsection-title">
+          <i class="fas fa-user-cog"></i> 8.7 Admin Dashboard
+        </h3>
+        <div class="screenshot-grid">
+          <div class="screenshot-item">
+            <img
+              src="./images/Screenshot 2026-01-08 195946.png"
+              alt="Admin Dashboard Screenshot"
+              class="screenshot-image"
+            />
+            <p class="screenshot-caption">
+              Figure 8.12: Admin dashboard with statistics
+            </p>
+          </div>
+          <div class="screenshot-item">
+            <img
+              src="./images/Screenshot 2026-01-08 195917.png"
+              alt="Admin Book Management Screenshot"
+              class="screenshot-image"
+            />
+            <p class="screenshot-caption">
+              Figure 8.13: Admin book management interface
+            </p>
+          </div>
+        </div>
+
+        <div class="screenshot-item" style="max-width: 600px; margin: 0 auto">
+          <img
+            src="./images/Screenshot 2026-01-08 195907.png"
+            alt="Admin Reports Screenshot"
+            class="screenshot-image"
+          />
+          <p class="screenshot-caption">
+            Figure 8.14: Admin reports and analytics
+          </p>
+        </div>
+      </div>
+
+      <!-- Section 9: Core Use Cases -->
+      <div id="section9" class="section">
+        <h2 class="section-title">
+          <i class="fas fa-list-check"></i> 9. Core Use Cases
+        </h2>
+
+        <h3 class="subsection-title">
+          <i class="fas fa-user-graduate"></i> 9.1 Student Book Borrowing
+          Workflow
+        </h3>
+        <div class="highlight-box">
+          <ol class="content-list">
+            <li>Student logs into the system</li>
+            <li>Searches for books by title, author, or category</li>
+            <li>Views book details and checks availability</li>
+            <li>Reserves book with specified dates</li>
+            <li>Receives real-time notification of successful reservation</li>
+            <li>Borrows book from library</li>
+            <li>Returns book before due date</li>
+            <li>System automatically updates inventory and status</li>
+          </ol>
+        </div>
+
+        <h3 class="subsection-title">
+          <i class="fas fa-calendar-check"></i> 9.2 Hall Booking for Events
+        </h3>
+        <div class="highlight-box">
+          <ol class="content-list">
+            <li>User searches available halls by capacity and date</li>
+            <li>Views hall details including amenities</li>
+            <li>Submits booking request with event details</li>
+            <li>System checks for booking conflicts</li>
+            <li>Admin reviews and confirms booking</li>
+            <li>User receives confirmation notification</li>
+            <li>User uses hall for scheduled event</li>
+          </ol>
+        </div>
+
+        <h3 class="subsection-title">
+          <i class="fas fa-lightbulb"></i> 9.3 Book Suggestion Process
+        </h3>
+        <div class="highlight-box">
+          <ol class="content-list">
+            <li>Student submits book suggestion with details</li>
+            <li>Admin reviews suggestion in admin panel</li>
+            <li>Admin approves or rejects with notes</li>
+            <li>Student receives notification of decision</li>
+            <li>If approved, admin purchases book</li>
+            <li>Admin marks suggestion as purchased</li>
+            <li>Admin adds new book to catalog</li>
+            <li>Student receives final notification</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Section 10: Conclusion -->
+      <div id="section10" class="section">
+        <h2 class="section-title">
+          <i class="fas fa-flag-checkered"></i> 10. Conclusion
+        </h2>
+
+        <p class="paragraph">
+          Kitabi represents a comprehensive solution for modern library
+          management, successfully combining traditional library operations with
+          cutting-edge web technologies. The system addresses the core
+          requirements specified in the course project while extending
+          functionality to provide a production-ready application.
+        </p>
+
+        <h3 class="subsection-title">
+          <i class="fas fa-trophy"></i> 10.1 Key Achievements
+        </h3>
+        <ul class="content-list">
+          <li>
+            Successfully implemented all required functions: book search,
+            reservation, hall booking, and suggestions
+          </li>
+          <li>
+            Created an intuitive, modern interface with excellent user
+            experience
+          </li>
+          <li>
+            Developed a scalable, secure architecture using industry-standard
+            technologies
+          </li>
+          <li>Implemented full bilingual support for diverse user bases</li>
+          <li>Added real-time notifications for enhanced user engagement</li>
+          <li>
+            Created comprehensive admin tools for complete library oversight
+          </li>
+          <li>Implemented detailed analytics and reporting capabilities</li>
+        </ul>
+
+        <h3 class="subsection-title">
+          <i class="fas fa-code"></i> 10.2 Technical Excellence
+        </h3>
+        <p class="paragraph">
+          The project demonstrates mastery of full-stack development,
+          incorporating modern practices such as TypeScript for type safety,
+          React Query for efficient state management, and Socket.IO for
+          real-time communication. The implementation follows security best
+          practices including JWT authentication, password hashing, and input
+          validation.
+        </p>
+
+        <h3 class="subsection-title">
+          <i class="fas fa-chart-line"></i> 10.3 Impact and Benefits
+        </h3>
+        <p class="paragraph">
+          Kitabi streamlines library operations by automating manual processes,
+          reducing administrative overhead, and improving user satisfaction. The
+          system provides:
+        </p>
+        <ul class="content-list">
+          <li>24/7 access to library services</li>
+          <li>Reduced wait times and improved resource utilization</li>
+          <li>Better inventory management and tracking</li>
+          <li>Data-driven decision making through analytics</li>
+          <li>Enhanced user engagement and satisfaction</li>
+        </ul>
+
+        <h3 class="subsection-title">
+          <i class="fas fa-rocket"></i> 10.4 Future Enhancements
+        </h3>
+        <p class="paragraph">
+          While Kitabi is production-ready, potential future enhancements
+          include:
+        </p>
+        <ul class="content-list">
+          <li>Mobile native applications for iOS and Android</li>
+          <li>Integration with university student information systems</li>
+          <li>QR code scanning for quick book checkout</li>
+          <li>AI-powered book recommendations</li>
+          <li>Digital library integration for e-books</li>
+          <li>Advanced analytics with machine learning insights</li>
+        </ul>
+
+        <div class="highlight-box" style="margin-top: 3rem">
+          <h4><i class="fas fa-check-circle"></i> Final Note</h4>
+          <p class="paragraph" style="margin: 0">
+            In conclusion, Kitabi successfully meets and exceeds the project
+            requirements, delivering a robust, scalable, and user-friendly
+            library management system that can serve educational institutions of
+            all sizes.
+          </p>
+        </div>
+      </div>
+
+      <!-- Appendix -->
+      <div id="appendix" class="section">
+        <h2 class="section-title">
+          <i class="fas fa-calendar-alt"></i> Appendix: Project Development
+          Timeline
+        </h2>
+
+        <p class="paragraph">
+          The Kitabi project was developed over the course of the semester,
+          following an agile methodology with iterative development cycles.
+        </p>
+
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Phase</th>
+                <th>Duration</th>
+                <th>Deliverables</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Planning</strong></td>
+                <td>Week 1-2</td>
+                <td>Requirements, UML Diagrams</td>
+              </tr>
+              <tr>
+                <td><strong>Backend Development</strong></td>
+                <td>Week 3-6</td>
+                <td>API, Database, Authentication</td>
+              </tr>
+              <tr>
+                <td><strong>Frontend Development</strong></td>
+                <td>Week 7-10</td>
+                <td>UI Components, Pages, Features</td>
+              </tr>
+              <tr>
+                <td><strong>Integration</strong></td>
+                <td>Week 11-12</td>
+                <td>Full System Integration, Testing</td>
+              </tr>
+              <tr>
+                <td><strong>Finalization</strong></td>
+                <td>Week 13-14</td>
+                <td>Documentation, Presentation Prep</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <div class="footer-content">
+          <p class="footer-title">Kitabi Library Management System</p>
+          <p class="footer-text">
+            The Hashemite University - Department of Software Engineering
+          </p>
+          <p class="footer-text">First Semester 2025-2026</p>
+          <p class="footer-divider">--- End of Documentation ---</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <button
+        class="action-btn scroll-to-top"
+        id="scrollTop"
+        aria-label="Scroll to top"
+      >
+        <i class="fas fa-arrow-up"></i>
+      </button>
+      <button
+        class="action-btn"
+        onclick="window.print()"
+        aria-label="Print document"
+      >
+        <i class="fas fa-print"></i>
+      </button>
+    </div>
+
+    <script>
+      // Progress Bar
+      window.addEventListener("scroll", () => {
+        const winScroll =
+          document.body.scrollTop || document.documentElement.scrollTop;
+        const height =
+          document.documentElement.scrollHeight -
+          document.documentElement.clientHeight;
+        const scrolled = (winScroll / height) * 100;
+        document.getElementById("progressBar").style.width = scrolled + "%";
+      });
+
+      // Navbar Hide on Scroll Down
+      let lastScroll = 0;
+      const navbar = document.getElementById("navbar");
+
+      window.addEventListener("scroll", () => {
+        const currentScroll = window.pageYOffset;
+
+        if (currentScroll > lastScroll && currentScroll > 100) {
+          navbar.classList.add("hidden");
+        } else {
+          navbar.classList.remove("hidden");
+        }
+
+        lastScroll = currentScroll;
+      });
+
+      // Scroll to Top Button
+      const scrollTopBtn = document.getElementById("scrollTop");
+
+      window.addEventListener("scroll", () => {
+        if (window.pageYOffset > 500) {
+          scrollTopBtn.classList.add("visible");
+        } else {
+          scrollTopBtn.classList.remove("visible");
+        }
+      });
+
+      scrollTopBtn.addEventListener("click", () => {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      });
+
+      // Mobile Menu
+      const menuToggle = document.getElementById("menuToggle");
+      const menuClose = document.getElementById("menuClose");
+      const mobileMenu = document.getElementById("mobileMenu");
+      const mobileOverlay = document.getElementById("mobileOverlay");
+
+      const openMenu = () => {
+        mobileMenu.classList.add("active");
+        mobileOverlay.classList.add("active");
+        document.body.style.overflow = "hidden";
+      };
+
+      const closeMenu = () => {
+        mobileMenu.classList.remove("active");
+        mobileOverlay.classList.remove("active");
+        document.body.style.overflow = "";
+      };
+
+      menuToggle.addEventListener("click", openMenu);
+      menuClose.addEventListener("click", closeMenu);
+      mobileOverlay.addEventListener("click", closeMenu);
+
+      // Close menu on link click
+      document.querySelectorAll(".mobile-menu-list a").forEach((link) => {
+        link.addEventListener("click", closeMenu);
+      });
+
+      // Smooth Scrolling for All Links
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute("href"));
+          if (target) {
+            const navbarHeight = navbar.offsetHeight;
+            const targetPosition =
+              target.getBoundingClientRect().top +
+              window.pageYOffset -
+              navbarHeight -
+              20;
+
+            window.scrollTo({
+              top: targetPosition,
+              behavior: "smooth",
+            });
+          }
+        });
+      });
+
+      // Intersection Observer for Fade-in Animations
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: "0px 0px -50px 0px",
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = "1";
+            entry.target.style.transform = "translateY(0)";
+          }
+        });
+      }, observerOptions);
+
+      // Observe all sections
+      document
+        .querySelectorAll(".section, .feature-box, .screenshot-item")
+        .forEach((el) => {
+          el.style.opacity = "0";
+          el.style.transform = "translateY(20px)";
+          el.style.transition = "opacity 0.6s ease, transform 0.6s ease";
+          observer.observe(el);
+        });
+
+      // Keyboard Navigation
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && mobileMenu.classList.contains("active")) {
+          closeMenu();
+        }
+      });
+
+      // Print Handling
+      window.addEventListener("beforeprint", () => {
+        // Expand all collapsed elements for printing
+        document.querySelectorAll(".diagram-iframe").forEach((iframe) => {
+          iframe.style.height = "600px";
+        });
+      });
+
+      // Add loading state to iframes
+      document.querySelectorAll(".diagram-iframe").forEach((iframe) => {
+        iframe.addEventListener("load", function () {
+          this.style.opacity = "1";
+        });
+        iframe.style.opacity = "0";
+        iframe.style.transition = "opacity 0.3s";
+      });
+
+      // Performance: Lazy load iframes
+      if ("IntersectionObserver" in window) {
+        const iframeObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const iframe = entry.target;
+              if (!iframe.src && iframe.dataset.src) {
+                iframe.src = iframe.dataset.src;
+              }
+              iframeObserver.unobserve(iframe);
+            }
+          });
+        });
+
+        document
+          .querySelectorAll(".diagram-iframe[data-src]")
+          .forEach((iframe) => {
+            iframeObserver.observe(iframe);
+          });
+      }
+
+      // Accessibility: Focus management
+      const focusableElements = document.querySelectorAll(
+        'a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])'
+      );
+
+      // Add keyboard navigation hints
+      document.addEventListener("DOMContentLoaded", () => {
+        console.log("Kitabi Documentation Loaded Successfully! 🎉");
+        console.log(
+          "Total Sections:",
+          document.querySelectorAll(".section").length
+        );
+        console.log("Mobile Responsive: ✓");
+        console.log("Print Ready: ✓");
+        console.log("Accessibility: ✓");
+      });
+    </script>
+  </body>
+</html>

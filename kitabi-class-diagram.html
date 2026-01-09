@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kitabi - Enhanced Class Diagram</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background: linear-gradient(
+          135deg,
+          #667eea 0%,
+          #764ba2 50%,
+          #f093fb 100%
+        );
+        min-height: 100vh;
+        padding: 40px 20px;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      .diagram-container {
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 30px;
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
+        padding: 50px;
+        max-width: 1900px;
+        margin: 0 auto;
+        backdrop-filter: blur(10px);
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 50px;
+        position: relative;
+      }
+
+      .header::after {
+        content: "";
+        position: absolute;
+        bottom: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 200px;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        border-radius: 2px;
+      }
+
+      .title {
+        font-size: 3.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 10px;
+      }
+
+      .subtitle {
+        font-size: 1.8rem;
+        color: #64748b;
+        font-weight: 600;
+      }
+
+      /* Class Card Styles */
+      .class-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        border: 3px solid;
+        height: fit-content;
+      }
+
+      .class-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+      }
+
+      .class-header {
+        padding: 20px;
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 1.3rem;
+        font-weight: 700;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .class-header::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: rgba(255, 255, 255, 0.1);
+        transform: rotate(45deg);
+        transition: all 0.5s;
+      }
+
+      .class-card:hover .class-header::before {
+        top: -100%;
+        right: -100%;
+      }
+
+      .class-icon {
+        font-size: 1.5rem;
+        z-index: 1;
+      }
+
+      .class-name {
+        z-index: 1;
+      }
+
+      .class-section {
+        padding: 20px;
+      }
+
+      .section-title {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .section-title i {
+        font-size: 0.9rem;
+      }
+
+      .attribute-item,
+      .method-item {
+        font-family: "Courier New", monospace;
+        font-size: 0.9rem;
+        line-height: 1.8;
+        color: #1e293b;
+        padding: 4px 8px;
+        border-radius: 4px;
+        transition: background 0.2s;
+      }
+
+      .attribute-item:hover,
+      .method-item:hover {
+        background: #f1f5f9;
+      }
+
+      .visibility-icon {
+        display: inline-block;
+        width: 18px;
+        color: #64748b;
+      }
+
+      .type-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-left: 8px;
+      }
+
+      /* Color Schemes for Different Classes */
+      .class-user {
+        border-color: #3b82f6;
+      }
+      .class-user .class-header {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+      }
+      .class-user .section-title {
+        color: #3b82f6;
+      }
+
+      .class-book {
+        border-color: #10b981;
+      }
+      .class-book .class-header {
+        background: linear-gradient(135deg, #10b981, #059669);
+      }
+      .class-book .section-title {
+        color: #10b981;
+      }
+
+      .class-reservation {
+        border-color: #f59e0b;
+      }
+      .class-reservation .class-header {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+      }
+      .class-reservation .section-title {
+        color: #f59e0b;
+      }
+
+      .class-hall {
+        border-color: #8b5cf6;
+      }
+      .class-hall .class-header {
+        background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+      }
+      .class-hall .section-title {
+        color: #8b5cf6;
+      }
+
+      .class-hallbooking {
+        border-color: #ec4899;
+      }
+      .class-hallbooking .class-header {
+        background: linear-gradient(135deg, #ec4899, #db2777);
+      }
+      .class-hallbooking .section-title {
+        color: #ec4899;
+      }
+
+      .class-suggestion {
+        border-color: #14b8a6;
+      }
+      .class-suggestion .class-header {
+        background: linear-gradient(135deg, #14b8a6, #0d9488);
+      }
+      .class-suggestion .section-title {
+        color: #14b8a6;
+      }
+
+      .class-notification {
+        border-color: #ef4444;
+      }
+      .class-notification .class-header {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+      }
+      .class-notification .section-title {
+        color: #ef4444;
+      }
+
+      .class-activity {
+        border-color: #64748b;
+      }
+      .class-activity .class-header {
+        background: linear-gradient(135deg, #64748b, #475569);
+      }
+      .class-activity .section-title {
+        color: #64748b;
+      }
+
+      /* Grid Layout */
+      .classes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 30px;
+        margin-bottom: 50px;
+      }
+
+      /* Relationships Section */
+      .relationships-section {
+        margin-top: 50px;
+        padding: 40px;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border-radius: 20px;
+        border: 3px solid #e2e8f0;
+      }
+
+      .relationships-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 30px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .relationship-item {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 15px;
+        border-left: 5px solid;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s;
+      }
+
+      .relationship-item:hover {
+        transform: translateX(5px);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      }
+
+      .relationship-content {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+      }
+
+      .relationship-class {
+        font-weight: 700;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 0.95rem;
+      }
+
+      .relationship-arrow {
+        font-size: 1.5rem;
+        color: #64748b;
+      }
+
+      .relationship-label {
+        padding: 6px 12px;
+        background: #f1f5f9;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        color: #475569;
+        font-style: italic;
+      }
+
+      .multiplicity {
+        font-weight: 700;
+        color: #64748b;
+        font-size: 0.9rem;
+      }
+
+      /* Legend */
+      .legend-section {
+        margin-top: 40px;
+        padding-top: 40px;
+        border-top: 3px solid #e2e8f0;
+      }
+
+      .legend-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 30px;
+      }
+
+      .legend-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+      }
+
+      .legend-card {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        border: 2px solid #e2e8f0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+
+      .legend-card-title {
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 15px;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 10px;
+        font-size: 0.95rem;
+      }
+
+      .legend-symbol {
+        font-weight: 700;
+        font-family: "Courier New", monospace;
+        color: #64748b;
+        min-width: 30px;
+      }
+
+      /* Animations */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .class-card {
+        animation: fadeInUp 0.5s ease-out backwards;
+      }
+
+      .class-card:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      .class-card:nth-child(2) {
+        animation-delay: 0.15s;
+      }
+      .class-card:nth-child(3) {
+        animation-delay: 0.2s;
+      }
+      .class-card:nth-child(4) {
+        animation-delay: 0.25s;
+      }
+      .class-card:nth-child(5) {
+        animation-delay: 0.3s;
+      }
+      .class-card:nth-child(6) {
+        animation-delay: 0.35s;
+      }
+      .class-card:nth-child(7) {
+        animation-delay: 0.4s;
+      }
+      .class-card:nth-child(8) {
+        animation-delay: 0.45s;
+      }
+
+      /* Responsive */
+      @media (max-width: 1024px) {
+        .title {
+          font-size: 2.5rem;
+        }
+
+        .subtitle {
+          font-size: 1.4rem;
+        }
+
+        .classes-grid {
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+      }
+
+      @media (max-width: 768px) {
+        .relationship-content {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="diagram-container">
+      <!-- Header -->
+      <div class="header">
+        <h1 class="title">📚 Kitabi Library System</h1>
+        <h2 class="subtitle">Class Diagram</h2>
+      </div>
+
+      <!-- Classes Grid -->
+      <div class="classes-grid">
+        <!-- User Class -->
+        <div class="class-card class-user">
+          <div class="class-header">
+            <i class="fas fa-user class-icon"></i>
+            <span class="class-name">User</span>
+          </div>
+          <div class="class-section" style="background: #eff6ff">
+            <div class="section-title">
+              <i class="fas fa-database"></i>
+              Attributes
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> id: <strong>int</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> email:
+              <strong>string</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> password:
+              <strong>string</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> firstName:
+              <strong>string</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> lastName:
+              <strong>string</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> role: <strong>enum</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> isVerified:
+              <strong>boolean</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> createdAt:
+              <strong>DateTime</strong>
+            </div>
+          </div>
+          <div class="class-section">
+            <div class="section-title">
+              <i class="fas fa-code"></i>
+              Methods
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> register():
+              <strong>void</strong>
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> login():
+              <strong>token</strong>
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> verifyEmail():
+              <strong>boolean</strong>
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> resetPassword():
+              <strong>void</strong>
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> updateProfile():
+              <strong>void</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Book Class -->
+        <div class="class-card class-book">
+          <div class="class-header">
+            <i class="fas fa-book class-icon"></i>
+            <span class="class-name">Book</span>
+          </div>
+          <div class="class-section" style="background: #ecfdf5">
+            <div class="section-title">
+              <i class="fas fa-database"></i>
+              Attributes
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> id: <strong>int</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> titleEn:
+              <strong>string</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> titleAr:
+              <strong>string</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> authorEn:
+              <strong>string</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> authorAr:
+              <strong>string</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> isbn:
+              <strong>string</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> category:
+              <strong>string</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> totalCopies:
+              <strong>int</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> availableCopies:
+              <strong>int</strong>
+            </div>
+          </div>
+          <div class="class-section">
+            <div class="section-title">
+              <i class="fas fa-code"></i>
+              Methods
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> create():
+              <strong>Book</strong>
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> update():
+              <strong>boolean</strong>
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> delete():
+              <strong>boolean</strong>
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> search():
+              <strong>Book[]</strong>
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> checkAvailability():
+              <strong>int</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reservation Class -->
+        <div class="class-card class-reservation">
+          <div class="class-header">
+            <i class="fas fa-bookmark class-icon"></i>
+            <span class="class-name">Reservation</span>
+          </div>
+          <div class="class-section" style="background: #fffbeb">
+            <div class="section-title">
+              <i class="fas fa-database"></i>
+              Attributes
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> id: <strong>int</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> userId:
+              <strong>int</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> bookId:
+              <strong>int</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> reservationDate:
+              <strong>Date</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> returnDate:
+              <strong>Date</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> actualReturnDate:
+              <strong>Date?</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> status:
+              <strong>enum</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> createdAt:
+              <strong>DateTime</strong>
+            </div>
+          </div>
+          <div class="class-section">
+            <div class="section-title">
+              <i class="fas fa-code"></i>
+              Methods
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> create():
+              <strong>Reservation</strong>
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> updateStatus():
+              <strong>boolean</strong>
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> cancel():
+              <strong>boolean</strong>
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> complete():
+              <strong>boolean</strong>
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> checkOverdue():
+              <strong>boolean</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hall Class -->
+        <div class="class-card class-hall">
+          <div class="class-header">
+            <i class="fas fa-building class-icon"></i>
+            <span class="class-name">Hall</span>
+          </div>
+          <div class="class-section" style="background: #faf5ff">
+            <div class="section-title">
+              <i class="fas fa-database"></i>
+              Attributes
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> id: <strong>int</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> nameEn:
+              <strong>string</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> nameAr:
+              <strong>string</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> descriptionEn:
+              <strong>string</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> descriptionAr:
+              <strong>string</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> capacity:
+              <strong>int</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> amenities:
+              <strong>string</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> isAvailable:
+              <strong>boolean</strong>
+            </div>
+          </div>
+          <div class="class-section">
+            <div class="section-title">
+              <i class="fas fa-code"></i>
+              Methods
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> create():
+              <strong>Hall</strong>
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> update():
+              <strong>boolean</strong>
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> delete():
+              <strong>boolean</strong>
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> search():
+              <strong>Hall[]</strong>
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> checkAvailability():
+              <strong>boolean</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- HallBooking Class -->
+        <div class="class-card class-hallbooking">
+          <div class="class-header">
+            <i class="fas fa-calendar-check class-icon"></i>
+            <span class="class-name">HallBooking</span>
+          </div>
+          <div class="class-section" style="background: #fdf2f8">
+            <div class="section-title">
+              <i class="fas fa-database"></i>
+              Attributes
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> id: <strong>int</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> userId:
+              <strong>int</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> hallId:
+              <strong>int</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> eventName:
+              <strong>string</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> eventDate:
+              <strong>Date</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> startTime:
+              <strong>Time</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> endTime:
+              <strong>Time</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> purpose:
+              <strong>string</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> status:
+              <strong>enum</strong>
+            </div>
+          </div>
+          <div class="class-section">
+            <div class="section-title">
+              <i class="fas fa-code"></i>
+              Methods
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> create():
+              <strong>HallBooking</strong>
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> updateStatus():
+              <strong>boolean</strong>
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> cancel():
+              <strong>boolean</strong>
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> confirm():
+              <strong>boolean</strong>
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> checkConflict():
+              <strong>boolean</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- BookSuggestion Class -->
+        <div class="class-card class-suggestion">
+          <div class="class-header">
+            <i class="fas fa-lightbulb class-icon"></i>
+            <span class="class-name">BookSuggestion</span>
+          </div>
+          <div class="class-section" style="background: #f0fdfa">
+            <div class="section-title">
+              <i class="fas fa-database"></i>
+              Attributes
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> id: <strong>int</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> userId:
+              <strong>int</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> title:
+              <strong>string</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> author:
+              <strong>string</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> reason:
+              <strong>string</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> status:
+              <strong>enum</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> adminNotes:
+              <strong>string?</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> createdAt:
+              <strong>DateTime</strong>
+            </div>
+          </div>
+          <div class="class-section">
+            <div class="section-title">
+              <i class="fas fa-code"></i>
+              Methods
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> create():
+              <strong>BookSuggestion</strong>
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> updateStatus():
+              <strong>boolean</strong>
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> approve():
+              <strong>boolean</strong>
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> reject():
+              <strong>boolean</strong>
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> markPurchased():
+              <strong>boolean</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notification Class -->
+        <div class="class-card class-notification">
+          <div class="class-header">
+            <i class="fas fa-bell class-icon"></i>
+            <span class="class-name">Notification</span>
+          </div>
+          <div class="class-section" style="background: #fef2f2">
+            <div class="section-title">
+              <i class="fas fa-database"></i>
+              Attributes
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> id: <strong>int</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> userId:
+              <strong>int</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> titleEn:
+              <strong>string</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> titleAr:
+              <strong>string</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> messageEn:
+              <strong>string</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> messageAr:
+              <strong>string</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> type: <strong>enum</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> priority:
+              <strong>enum</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> isRead:
+              <strong>boolean</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> actionUrl:
+              <strong>string?</strong>
+            </div>
+          </div>
+          <div class="class-section">
+            <div class="section-title">
+              <i class="fas fa-code"></i>
+              Methods
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> create():
+              <strong>Notification</strong>
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> markAsRead():
+              <strong>boolean</strong>
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> delete():
+              <strong>boolean</strong>
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> send():
+              <strong>boolean</strong>
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> sendToUser():
+              <strong>boolean</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- ActivityLog Class -->
+        <div class="class-card class-activity">
+          <div class="class-header">
+            <i class="fas fa-history class-icon"></i>
+            <span class="class-name">ActivityLog</span>
+          </div>
+          <div class="class-section" style="background: #f8fafc">
+            <div class="section-title">
+              <i class="fas fa-database"></i>
+              Attributes
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> id: <strong>int</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> userId:
+              <strong>int</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> activityType:
+              <strong>string</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> description:
+              <strong>string</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> metadata:
+              <strong>JSON</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> ipAddress:
+              <strong>string</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> userAgent:
+              <strong>string</strong>
+            </div>
+            <div class="attribute-item">
+              <span class="visibility-icon">-</span> createdAt:
+              <strong>DateTime</strong>
+            </div>
+          </div>
+          <div class="class-section">
+            <div class="section-title">
+              <i class="fas fa-code"></i>
+              Methods
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> create():
+              <strong>ActivityLog</strong>
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> query():
+              <strong>ActivityLog[]</strong>
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> delete():
+              <strong>boolean</strong>
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> getStatistics():
+              <strong>Object</strong>
+            </div>
+            <div class="method-item">
+              <span class="visibility-icon">+</span> deleteOldLogs():
+              <strong>int</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Relationships Section -->
+      <div class="relationships-section">
+        <h3 class="relationships-title">
+          <i class="fas fa-project-diagram"></i>
+          Class Relationships
+        </h3>
+
+        <div class="relationship-item" style="border-color: #3b82f6">
+          <div class="relationship-content">
+            <span
+              class="relationship-class"
+              style="background: #dbeafe; color: #1e40af"
+              >User</span
+            >
+            <span class="multiplicity">1</span>
+            <span class="relationship-arrow">──────</span>
+            <span class="multiplicity">*</span>
+            <span
+              class="relationship-class"
+              style="background: #fef3c7; color: #92400e"
+              >Reservation</span
+            >
+            <span class="relationship-label">has</span>
+          </div>
+        </div>
+
+        <div class="relationship-item" style="border-color: #10b981">
+          <div class="relationship-content">
+            <span
+              class="relationship-class"
+              style="background: #d1fae5; color: #065f46"
+              >Book</span
+            >
+            <span class="multiplicity">1</span>
+            <span class="relationship-arrow">──────</span>
+            <span class="multiplicity">*</span>
+            <span
+              class="relationship-class"
+              style="background: #fef3c7; color: #92400e"
+              >Reservation</span
+            >
+            <span class="relationship-label">is reserved in</span>
+          </div>
+        </div>
+
+        <div class="relationship-item" style="border-color: #3b82f6">
+          <div class="relationship-content">
+            <span
+              class="relationship-class"
+              style="background: #dbeafe; color: #1e40af"
+              >User</span
+            >
+            <span class="multiplicity">1</span>
+            <span class="relationship-arrow">──────</span>
+            <span class="multiplicity">*</span>
+            <span
+              class="relationship-class"
+              style="background: #fce7f3; color: #9f1239"
+              >HallBooking</span
+            >
+            <span class="relationship-label">books</span>
+          </div>
+        </div>
+
+        <div class="relationship-item" style="border-color: #8b5cf6">
+          <div class="relationship-content">
+            <span
+              class="relationship-class"
+              style="background: #ede9fe; color: #5b21b6"
+              >Hall</span
+            >
+            <span class="multiplicity">1</span>
+            <span class="relationship-arrow">──────</span>
+            <span class="multiplicity">*</span>
+            <span
+              class="relationship-class"
+              style="background: #fce7f3; color: #9f1239"
+              >HallBooking</span
+            >
+            <span class="relationship-label">is booked for</span>
+          </div>
+        </div>
+
+        <div class="relationship-item" style="border-color: #3b82f6">
+          <div class="relationship-content">
+            <span
+              class="relationship-class"
+              style="background: #dbeafe; color: #1e40af"
+              >User</span
+            >
+            <span class="multiplicity">1</span>
+            <span class="relationship-arrow">──────</span>
+            <span class="multiplicity">*</span>
+            <span
+              class="relationship-class"
+              style="background: #ccfbf1; color: #115e59"
+              >BookSuggestion</span
+            >
+            <span class="relationship-label">submits</span>
+          </div>
+        </div>
+
+        <div class="relationship-item" style="border-color: #3b82f6">
+          <div class="relationship-content">
+            <span
+              class="relationship-class"
+              style="background: #dbeafe; color: #1e40af"
+              >User</span
+            >
+            <span class="multiplicity">1</span>
+            <span class="relationship-arrow">──────</span>
+            <span class="multiplicity">*</span>
+            <span
+              class="relationship-class"
+              style="background: #fee2e2; color: #991b1b"
+              >Notification</span
+            >
+            <span class="relationship-label">receives</span>
+          </div>
+        </div>
+
+        <div class="relationship-item" style="border-color: #3b82f6">
+          <div class="relationship-content">
+            <span
+              class="relationship-class"
+              style="background: #dbeafe; color: #1e40af"
+              >User</span
+            >
+            <span class="multiplicity">1</span>
+            <span class="relationship-arrow">──────</span>
+            <span class="multiplicity">*</span>
+            <span
+              class="relationship-class"
+              style="background: #f1f5f9; color: #334155"
+              >ActivityLog</span
+            >
+            <span class="relationship-label">generates</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Legend Section -->
+      <div class="legend-section">
+        <h3 class="legend-title">📋 Legend & Notation</h3>
+        <div class="legend-grid">
+          <div class="legend-card">
+            <div class="legend-card-title">
+              <i class="fas fa-eye"></i>
+              Visibility Modifiers
+            </div>
+            <div class="legend-item">
+              <span class="legend-symbol">-</span>
+              <span>Private (accessible within class only)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-symbol">+</span>
+              <span>Public (accessible from anywhere)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-symbol">#</span>
+              <span>Protected (accessible within class & subclasses)</span>
+            </div>
+          </div>
+
+          <div class="legend-card">
+            <div class="legend-card-title">
+              <i class="fas fa-link"></i>
+              Relationship Multiplicity
+            </div>
+            <div class="legend-item">
+              <span class="legend-symbol">1</span>
+              <span>Exactly one instance</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-symbol">*</span>
+              <span>Zero or more instances (many)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-symbol">0..1</span>
+              <span>Zero or one instance (optional)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-symbol">1..*</span>
+              <span>One or more instances</span>
+            </div>
+          </div>
+
+          <div class="legend-card">
+            <div class="legend-card-title">
+              <i class="fas fa-palette"></i>
+              Class Color Coding
+            </div>
+            <div class="legend-item">
+              <span
+                style="
+                  width: 20px;
+                  height: 20px;
+                  background: linear-gradient(135deg, #3b82f6, #2563eb);
+                  border-radius: 4px;
+                "
+              ></span>
+              <span>User Management</span>
+            </div>
+            <div class="legend-item">
+              <span
+                style="
+                  width: 20px;
+                  height: 20px;
+                  background: linear-gradient(135deg, #10b981, #059669);
+                  border-radius: 4px;
+                "
+              ></span>
+              <span>Book Management</span>
+            </div>
+            <div class="legend-item">
+              <span
+                style="
+                  width: 20px;
+                  height: 20px;
+                  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+                  border-radius: 4px;
+                "
+              ></span>
+              <span>Hall Management</span>
+            </div>
+            <div class="legend-item">
+              <span
+                style="
+                  width: 20px;
+                  height: 20px;
+                  background: linear-gradient(135deg, #ef4444, #dc2626);
+                  border-radius: 4px;
+                "
+              ></span>
+              <span>System Features</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Note -->
+      <div
+        style="
+          margin-top: 40px;
+          text-align: center;
+          color: #64748b;
+          font-size: 0.9rem;
+        "
+      >
+        <p>
+          <strong>Note:</strong> This class diagram represents the main entities
+          in the Kitabi Library Management System
+        </p>
+        <p style="margin-top: 5px">
+          Hover over cards to see interactive effects • All relationships follow
+          standard UML notation
+        </p>
+      </div>
+    </div>
+
+    <script>
+      // Interactive highlighting for related classes
+      const relationships = {
+        User: [
+          "Reservation",
+          "HallBooking",
+          "BookSuggestion",
+          "Notification",
+          "ActivityLog",
+        ],
+        Book: ["Reservation"],
+        Hall: ["HallBooking"],
+        Reservation: ["User", "Book"],
+        HallBooking: ["User", "Hall"],
+        BookSuggestion: ["User"],
+        Notification: ["User"],
+        ActivityLog: ["User"],
+      };
+
+      document.querySelectorAll(".class-card").forEach((card) => {
+        card.addEventListener("mouseenter", function () {
+          const className = this.querySelector(".class-name").textContent;
+          const relatedClasses = relationships[className] || [];
+
+          // Highlight related classes
+          document.querySelectorAll(".class-card").forEach((otherCard) => {
+            const otherClassName =
+              otherCard.querySelector(".class-name").textContent;
+            if (relatedClasses.includes(otherClassName)) {
+              otherCard.style.opacity = "1";
+              otherCard.style.transform = "translateY(-5px) scale(1.02)";
+            } else if (otherCard !== this) {
+              otherCard.style.opacity = "0.5";
+            }
+          });
+
+          // Highlight related relationship items
+          document.querySelectorAll(".relationship-item").forEach((item) => {
+            const text = item.textContent;
+            if (text.includes(className)) {
+              item.style.background = "#f0f9ff";
+              item.style.transform = "translateX(10px)";
+            }
+          });
+        });
+
+        card.addEventListener("mouseleave", function () {
+          // Reset all cards
+          document.querySelectorAll(".class-card").forEach((otherCard) => {
+            otherCard.style.opacity = "1";
+            otherCard.style.transform = "";
+          });
+
+          // Reset relationship items
+          document.querySelectorAll(".relationship-item").forEach((item) => {
+            item.style.background = "white";
+            item.style.transform = "";
+          });
+        });
+      });
+
+      // Click to copy class name
+      document.querySelectorAll(".class-name").forEach((name) => {
+        name.style.cursor = "pointer";
+        name.addEventListener("click", function () {
+          const text = this.textContent;
+          navigator.clipboard.writeText(text);
+
+          // Show feedback
+          const originalText = this.textContent;
+          this.textContent = "✓ Copied!";
+          setTimeout(() => {
+            this.textContent = originalText;
+          }, 1000);
+        });
+      });
+    </script>
+  </body>
+</html>

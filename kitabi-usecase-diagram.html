@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kitabi - Enhanced Use Case Diagram</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background: linear-gradient(
+          135deg,
+          #667eea 0%,
+          #764ba2 50%,
+          #f093fb 100%
+        );
+        min-height: 100vh;
+        padding: 40px 20px;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      .diagram-container {
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 30px;
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
+        padding: 50px;
+        max-width: 1800px;
+        margin: 0 auto;
+        backdrop-filter: blur(10px);
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 50px;
+        position: relative;
+      }
+
+      .header::after {
+        content: "";
+        position: absolute;
+        bottom: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 200px;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        border-radius: 2px;
+      }
+
+      .title {
+        font-size: 3.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 10px;
+      }
+
+      .subtitle {
+        font-size: 1.8rem;
+        color: #64748b;
+        font-weight: 600;
+      }
+
+      /* Actor Styles */
+      .actor-card {
+        background: white;
+        border-radius: 20px;
+        padding: 30px 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: all 0.3s ease;
+        border: 3px solid transparent;
+      }
+
+      .actor-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+      }
+
+      .actor-card.student {
+        border-color: #3b82f6;
+      }
+
+      .actor-card.admin {
+        border-color: #8b5cf6;
+      }
+
+      .actor-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 15px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 35px;
+        color: white;
+      }
+
+      .actor-icon.student {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+      }
+
+      .actor-icon.admin {
+        background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+      }
+
+      .actor-name {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1e293b;
+      }
+
+      /* Use Case Styles */
+      .use-case-item {
+        background: white;
+        border-radius: 50px;
+        padding: 18px 30px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: 2px solid;
+        margin: 12px 0;
+      }
+
+      .use-case-item:hover {
+        transform: translateX(10px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .use-case-item.shared {
+        border-color: #06b6d4;
+        background: linear-gradient(135deg, #ecfeff 0%, #cffafe 100%);
+      }
+
+      .use-case-item.student {
+        border-color: #3b82f6;
+      }
+
+      .use-case-item.admin {
+        border-color: #8b5cf6;
+      }
+
+      .use-case-item.special {
+        border-color: #f59e0b;
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      }
+
+      .use-case-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        color: white;
+        flex-shrink: 0;
+      }
+
+      .use-case-icon.shared {
+        background: linear-gradient(135deg, #06b6d4, #0891b2);
+      }
+      .use-case-icon.student {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+      }
+      .use-case-icon.admin {
+        background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+      }
+      .use-case-icon.special {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+      }
+
+      .use-case-text {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1e293b;
+        white-space: nowrap;
+      }
+
+      /* Grid Layout */
+      .diagram-grid {
+        display: grid;
+        grid-template-columns: 280px 1fr 280px;
+        gap: 60px;
+        margin-top: 60px;
+        position: relative;
+      }
+
+      .system-boundary {
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+        border: 4px solid #0ea5e9;
+        border-radius: 30px;
+        padding: 40px 30px;
+        position: relative;
+      }
+
+      .system-title {
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: linear-gradient(135deg, #0ea5e9, #0284c7);
+        color: white;
+        padding: 8px 30px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 1.2rem;
+        box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
+      }
+
+      .use-case-section {
+        margin-bottom: 30px;
+      }
+
+      .section-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 3px solid #e2e8f0;
+      }
+
+      /* Legend */
+      .legend {
+        margin-top: 60px;
+        padding-top: 40px;
+        border-top: 3px solid #e2e8f0;
+      }
+
+      .legend-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 30px;
+      }
+
+      .legend-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 25px;
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px;
+        background: #f8fafc;
+        border-radius: 12px;
+        border: 2px solid #e2e8f0;
+      }
+
+      .legend-icon {
+        width: 50px;
+        height: 35px;
+        border-radius: 20px;
+        border: 3px solid;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+      }
+
+      .legend-text {
+        font-weight: 600;
+        color: #334155;
+      }
+
+      /* Connection indicators */
+      .connection-indicator {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: white;
+        border: 3px solid;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+      .connection-indicator.left {
+        left: -10px;
+      }
+
+      .connection-indicator.right {
+        right: -10px;
+      }
+
+      /* Responsive */
+      @media (max-width: 1400px) {
+        .diagram-grid {
+          grid-template-columns: 250px 1fr 250px;
+          gap: 40px;
+        }
+      }
+
+      @media (max-width: 1024px) {
+        .diagram-grid {
+          grid-template-columns: 1fr;
+          gap: 30px;
+        }
+
+        .title {
+          font-size: 2.5rem;
+        }
+
+        .subtitle {
+          font-size: 1.4rem;
+        }
+      }
+
+      /* Animations */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .use-case-item {
+        animation: fadeInUp 0.5s ease-out backwards;
+      }
+
+      .use-case-item:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      .use-case-item:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .use-case-item:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+      .use-case-item:nth-child(4) {
+        animation-delay: 0.4s;
+      }
+      .use-case-item:nth-child(5) {
+        animation-delay: 0.5s;
+      }
+      .use-case-item:nth-child(6) {
+        animation-delay: 0.6s;
+      }
+      .use-case-item:nth-child(7) {
+        animation-delay: 0.7s;
+      }
+      .use-case-item:nth-child(8) {
+        animation-delay: 0.8s;
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-left: auto;
+      }
+
+      .badge.include {
+        background: #dcfce7;
+        color: #15803d;
+      }
+
+      .badge.extend {
+        background: #fef3c7;
+        color: #a16207;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="diagram-container">
+      <!-- Header -->
+      <div class="header">
+        <h1 class="title">📚 Kitabi Library System</h1>
+        <h2 class="subtitle">Use Case Diagram</h2>
+      </div>
+
+      <!-- Main Diagram Grid -->
+      <div class="diagram-grid">
+        <!-- Left Actor: Student/User -->
+        <div>
+          <div class="actor-card student">
+            <div class="actor-icon student">
+              <i class="fas fa-user-graduate"></i>
+            </div>
+            <div class="actor-name">Student / User</div>
+          </div>
+        </div>
+
+        <!-- Center: System Boundary with Use Cases -->
+        <div class="system-boundary">
+          <div class="system-title">
+            <i class="fas fa-book"></i> Kitabi System
+          </div>
+
+          <!-- Shared Functions -->
+          <div class="use-case-section">
+            <div class="section-title">🔐 Authentication</div>
+            <div class="use-case-item shared">
+              <div class="use-case-icon shared">
+                <i class="fas fa-right-to-bracket"></i>
+              </div>
+              <div class="use-case-text">Login / Register</div>
+            </div>
+          </div>
+
+          <!-- User Functions -->
+          <div class="use-case-section">
+            <div class="section-title">👤 Student Functions</div>
+
+            <div class="use-case-item student">
+              <div class="use-case-icon student">
+                <i class="fas fa-magnifying-glass"></i>
+              </div>
+              <div class="use-case-text">Search Books</div>
+            </div>
+
+            <div class="use-case-item student">
+              <div class="use-case-icon student">
+                <i class="fas fa-bookmark"></i>
+              </div>
+              <div class="use-case-text">Reserve Book</div>
+              <span class="badge include">«include» Search</span>
+            </div>
+
+            <div class="use-case-item student">
+              <div class="use-case-icon student">
+                <i class="fas fa-rotate-left"></i>
+              </div>
+              <div class="use-case-text">Return Book</div>
+            </div>
+
+            <div class="use-case-item student">
+              <div class="use-case-icon student">
+                <i class="fas fa-lightbulb"></i>
+              </div>
+              <div class="use-case-text">Suggest New Book</div>
+            </div>
+
+            <div class="use-case-item student">
+              <div class="use-case-icon student">
+                <i class="fas fa-building"></i>
+              </div>
+              <div class="use-case-text">Search Study Halls</div>
+            </div>
+
+            <div class="use-case-item student">
+              <div class="use-case-icon student">
+                <i class="fas fa-calendar-check"></i>
+              </div>
+              <div class="use-case-text">Book Study Hall</div>
+            </div>
+
+            <div class="use-case-item special">
+              <div class="use-case-icon special">
+                <i class="fas fa-bell"></i>
+              </div>
+              <div class="use-case-text">View Notifications</div>
+            </div>
+
+            <div class="use-case-item student">
+              <div class="use-case-icon student">
+                <i class="fas fa-user-circle"></i>
+              </div>
+              <div class="use-case-text">Manage Profile</div>
+            </div>
+          </div>
+
+          <!-- Admin Functions -->
+          <div class="use-case-section">
+            <div class="section-title">👨‍💼 Admin Functions</div>
+
+            <div class="use-case-item admin">
+              <div class="use-case-icon admin">
+                <i class="fas fa-books"></i>
+              </div>
+              <div class="use-case-text">Manage Books Inventory</div>
+            </div>
+
+            <div class="use-case-item admin">
+              <div class="use-case-icon admin">
+                <i class="fas fa-door-open"></i>
+              </div>
+              <div class="use-case-text">Manage Study Halls</div>
+            </div>
+
+            <div class="use-case-item admin">
+              <div class="use-case-icon admin">
+                <i class="fas fa-clipboard-list"></i>
+              </div>
+              <div class="use-case-text">Manage Reservations</div>
+            </div>
+
+            <div class="use-case-item admin">
+              <div class="use-case-icon admin">
+                <i class="fas fa-star"></i>
+              </div>
+              <div class="use-case-text">Review Book Suggestions</div>
+            </div>
+
+            <div class="use-case-item admin">
+              <div class="use-case-icon admin">
+                <i class="fas fa-users-cog"></i>
+              </div>
+              <div class="use-case-text">Manage Users</div>
+            </div>
+
+            <div class="use-case-item admin">
+              <div class="use-case-icon admin">
+                <i class="fas fa-chart-bar"></i>
+              </div>
+              <div class="use-case-text">View Reports</div>
+            </div>
+
+            <div class="use-case-item admin">
+              <div class="use-case-icon admin">
+                <i class="fas fa-history"></i>
+              </div>
+              <div class="use-case-text">View Activity Logs</div>
+            </div>
+
+            <div class="use-case-item admin">
+              <div class="use-case-icon admin">
+                <i class="fas fa-chart-line"></i>
+              </div>
+              <div class="use-case-text">Generate Analytics</div>
+            </div>
+          </div>
+
+          <!-- Connection Indicators -->
+          <div
+            class="connection-indicator left"
+            style="border-color: #3b82f6; top: 30%"
+          ></div>
+          <div
+            class="connection-indicator right"
+            style="border-color: #8b5cf6; top: 30%"
+          ></div>
+        </div>
+
+        <!-- Right Actor: Admin -->
+        <div>
+          <div class="actor-card admin">
+            <div class="actor-icon admin">
+              <i class="fas fa-user-shield"></i>
+            </div>
+            <div class="actor-name">Admin / Librarian</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Legend -->
+      <div class="legend">
+        <h3 class="legend-title">📋 Legend</h3>
+        <div class="legend-grid">
+          <div class="legend-item">
+            <div
+              class="legend-icon"
+              style="border-color: #06b6d4; color: #06b6d4"
+            >
+              <i class="fas fa-lock"></i>
+            </div>
+            <div class="legend-text">Shared Authentication</div>
+          </div>
+
+          <div class="legend-item">
+            <div
+              class="legend-icon"
+              style="border-color: #3b82f6; color: #3b82f6"
+            >
+              <i class="fas fa-user"></i>
+            </div>
+            <div class="legend-text">Student Functions</div>
+          </div>
+
+          <div class="legend-item">
+            <div
+              class="legend-icon"
+              style="border-color: #8b5cf6; color: #8b5cf6"
+            >
+              <i class="fas fa-user-tie"></i>
+            </div>
+            <div class="legend-text">Admin Functions</div>
+          </div>
+
+          <div class="legend-item">
+            <div
+              class="legend-icon"
+              style="border-color: #f59e0b; color: #f59e0b"
+            >
+              <i class="fas fa-bell"></i>
+            </div>
+            <div class="legend-text">Special Features</div>
+          </div>
+
+          <div class="legend-item">
+            <div
+              class="legend-icon"
+              style="border-color: #10b981; color: #10b981"
+            >
+              <i class="fas fa-arrow-right"></i>
+            </div>
+            <div class="legend-text">«include» Relationship</div>
+          </div>
+
+          <div class="legend-item">
+            <div
+              class="legend-icon"
+              style="border-color: #f59e0b; color: #f59e0b"
+            >
+              <i class="fas fa-arrow-up-right-from-square"></i>
+            </div>
+            <div class="legend-text">«extend» Relationship</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Note -->
+      <div
+        style="
+          margin-top: 40px;
+          text-align: center;
+          color: #64748b;
+          font-size: 0.9rem;
+        "
+      >
+        <p>
+          <strong>Note:</strong> This diagram illustrates the main use cases for
+          the Kitabi Library Management System
+        </p>
+        <p style="margin-top: 5px">
+          Hover over items to see interactive effects
+        </p>
+      </div>
+    </div>
+
+    <script>
+      // Add interactive tooltips
+      document.querySelectorAll(".use-case-item").forEach((item) => {
+        item.addEventListener("click", function () {
+          this.style.transform = "scale(1.05)";
+          setTimeout(() => {
+            this.style.transform = "";
+          }, 200);
+        });
+      });
+
+      // Actor cards interaction
+      document.querySelectorAll(".actor-card").forEach((card) => {
+        card.addEventListener("mouseenter", function () {
+          const type = this.classList.contains("student") ? "student" : "admin";
+          document
+            .querySelectorAll(`.use-case-item.${type}`)
+            .forEach((item) => {
+              item.style.boxShadow = "0 12px 30px rgba(59, 130, 246, 0.3)";
+            });
+        });
+
+        card.addEventListener("mouseleave", function () {
+          document.querySelectorAll(".use-case-item").forEach((item) => {
+            item.style.boxShadow = "";
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
